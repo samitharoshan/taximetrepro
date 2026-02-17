@@ -1,0 +1,1179 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="night">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>TaxiMeter Pro</title>
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
+<link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@500;600;700&family=Share+Tech+Mono&family=Exo+2:wght@300;400;600&display=swap" rel="stylesheet">
+<style>
+/* ══════════════════════════════════
+   THEME VARIABLES — Night & Day
+══════════════════════════════════ */
+[data-theme="night"] {
+  --bg:#080b0f; --panel:#0d1117; --panel2:#111820;
+  --border:#1a2230; --border2:#243040;
+  --text:#dce5f0; --text2:#a0b0c8; --muted:#4a5a70; --muted2:#6a7a90;
+  --surface:#13192280; --card-shadow:0 8px 40px rgba(0,0,0,.6);
+  --tile-filter:brightness(.88) saturate(.7) hue-rotate(200deg);
+  --input-bg:#111820;
+  --theme-icon:🌙;
+}
+[data-theme="day"] {
+  --bg:#f0f4f8; --panel:#ffffff; --panel2:#f7fafc;
+  --border:#d8e2ec; --border2:#c5d4e0;
+  --text:#1a2535; --text2:#3a4f6a; --muted:#8fa5bc; --muted2:#6a85a0;
+  --surface:#ffffffcc; --card-shadow:0 4px 20px rgba(0,0,0,.1);
+  --tile-filter:brightness(1) saturate(1) hue-rotate(0deg);
+  --input-bg:#f0f4f8;
+  --theme-icon:☀️;
+}
+
+/* Shared accent colors */
+:root {
+  --accent:#f5a623; --accent2:#e8420a;
+  --green:#00c853; --red:#f22b45; --blue:#2196f3;
+}
+
+*{margin:0;padding:0;box-sizing:border-box;}
+html,body{height:100%;font-family:'Exo 2',sans-serif;overflow-x:hidden;transition:background .4s,color .4s;}
+body{background:var(--bg);color:var(--text);}
+
+/* Night grid bg */
+[data-theme="night"] body::before{
+  content:'';position:fixed;inset:0;
+  background-image:linear-gradient(rgba(245,166,35,.02) 1px,transparent 1px),linear-gradient(90deg,rgba(245,166,35,.02) 1px,transparent 1px);
+  background-size:44px 44px;pointer-events:none;z-index:0;
+}
+/* Day subtle dots */
+[data-theme="day"] body::before{
+  content:'';position:fixed;inset:0;
+  background-image:radial-gradient(circle,rgba(245,166,35,.12) 1px,transparent 1px);
+  background-size:28px 28px;pointer-events:none;z-index:0;
+}
+
+.app{position:relative;z-index:1;max-width:520px;margin:0 auto;padding:12px 12px 40px;}
+
+/* ── Header ── */
+.header{text-align:center;padding:10px 0 14px;position:relative;}
+.logo-badge{font-size:9px;letter-spacing:5px;color:var(--accent);font-family:'Rajdhani',sans-serif;font-weight:600;}
+.header h1{font-family:'Rajdhani',sans-serif;font-size:34px;font-weight:700;letter-spacing:3px;line-height:1;}
+.header h1 span{color:var(--accent);}
+.tagline{font-size:10px;color:var(--muted2);margin-top:3px;letter-spacing:1.5px;}
+
+/* ── Theme Switch ── */
+.theme-switch{
+  position:absolute;top:14px;right:0;
+  display:flex;align-items:center;gap:8px;
+  background:var(--panel);border:1px solid var(--border);
+  border-radius:30px;padding:6px 12px;cursor:pointer;
+  transition:all .3s;box-shadow:var(--card-shadow);
+}
+.theme-switch:hover{border-color:var(--accent);}
+.theme-switch .icon{font-size:16px;transition:transform .4s;}
+.theme-switch .lbl{font-family:'Rajdhani',sans-serif;font-size:11px;font-weight:600;letter-spacing:1px;color:var(--muted2);}
+.theme-pill{
+  width:34px;height:18px;border-radius:9px;background:var(--border2);
+  position:relative;transition:background .3s;
+}
+[data-theme="day"] .theme-pill{background:var(--accent);}
+.theme-pill::after{
+  content:'';position:absolute;top:3px;left:3px;
+  width:12px;height:12px;border-radius:50%;background:#fff;
+  transition:left .3s;
+}
+[data-theme="day"] .theme-pill::after{left:19px;}
+
+/* ── Country + Currency Banner ── */
+.country-banner{
+  display:flex;align-items:center;justify-content:space-between;
+  background:var(--panel);border:1px solid var(--border);
+  border-radius:10px;padding:9px 14px;margin-bottom:10px;
+  box-shadow:var(--card-shadow);
+}
+.country-left{display:flex;align-items:center;gap:10px;}
+.country-flag{font-size:22px;line-height:1;}
+.country-name{font-family:'Rajdhani',sans-serif;font-size:14px;font-weight:600;color:var(--text);}
+.country-sub{font-size:10px;color:var(--muted2);margin-top:1px;}
+.currency-chip{
+  background:rgba(245,166,35,.1);border:1px solid rgba(245,166,35,.3);
+  border-radius:20px;padding:4px 12px;
+  font-family:'Share Tech Mono',monospace;font-size:13px;color:var(--accent);
+  font-weight:600;
+}
+.detect-btn{
+  font-size:10px;color:var(--muted2);cursor:pointer;letter-spacing:.5px;
+  padding:4px 8px;border:1px solid var(--border);border-radius:4px;
+  background:transparent;font-family:'Exo 2',sans-serif;
+  transition:all .2s;
+}
+.detect-btn:hover{border-color:var(--accent);color:var(--accent);}
+
+/* ── Nav Banner ── */
+.nav-banner{
+  display:none;align-items:center;gap:12px;
+  background:var(--panel);border:1px solid var(--border2);
+  border-radius:12px;padding:12px 16px;margin-bottom:10px;
+  position:relative;overflow:hidden;box-shadow:var(--card-shadow);
+  transition:background .4s,border-color .4s;
+}
+.nav-banner.show{display:flex;}
+.nav-banner::before{content:'';position:absolute;left:0;top:0;bottom:0;width:4px;background:var(--accent);}
+.nav-arrow{
+  width:52px;height:52px;border-radius:10px;
+  background:rgba(245,166,35,.12);border:1px solid rgba(245,166,35,.3);
+  display:flex;align-items:center;justify-content:center;flex-shrink:0;
+  font-size:26px;transition:all .3s;
+}
+.nav-arrow.urgent{background:rgba(242,43,69,.15);border-color:rgba(242,43,69,.4);animation:urgentPulse .6s infinite;}
+@keyframes urgentPulse{0%,100%{transform:scale(1)}50%{transform:scale(1.06);}}
+.nav-instruction{font-family:'Rajdhani',sans-serif;font-size:17px;font-weight:700;color:var(--text);line-height:1.2;}
+.nav-dist{font-size:11px;color:var(--accent);margin-top:3px;letter-spacing:.5px;}
+.nav-street{font-size:11px;color:var(--muted2);margin-top:1px;}
+
+/* ── Destination Box ── */
+.dest-box{
+  background:var(--panel);border:1px solid var(--border);
+  border-radius:12px;padding:14px 16px;margin-bottom:10px;
+  box-shadow:var(--card-shadow);transition:background .4s,border-color .4s;
+}
+.panel-title{
+  font-family:'Rajdhani',sans-serif;font-size:10px;letter-spacing:3px;
+  color:var(--muted);text-transform:uppercase;margin-bottom:10px;
+  display:flex;align-items:center;gap:8px;
+}
+.panel-title::after{content:'';flex:1;height:1px;background:var(--border);}
+.search-row{display:flex;gap:8px;margin-bottom:8px;}
+.search-input{
+  flex:1;background:var(--input-bg);border:1px solid var(--border);
+  border-radius:8px;padding:10px 14px;color:var(--text);
+  font-family:'Exo 2',sans-serif;font-size:13px;outline:none;transition:border-color .2s;
+}
+.search-input:focus{border-color:var(--accent);}
+.search-input::placeholder{color:var(--muted);}
+.btn-search{
+  background:var(--accent);border:none;border-radius:8px;
+  padding:10px 16px;color:#000;font-family:'Rajdhani',sans-serif;
+  font-size:13px;font-weight:700;letter-spacing:1px;cursor:pointer;transition:all .2s;white-space:nowrap;
+}
+.btn-search:hover{box-shadow:0 0 16px rgba(245,166,35,.4);}
+.search-hint{font-size:10px;color:var(--muted);letter-spacing:.5px;}
+.search-hint span{color:var(--accent);cursor:pointer;}
+.search-hint span:hover{text-decoration:underline;}
+
+.suggestions{
+  background:var(--panel2);border:1px solid var(--border2);
+  border-radius:8px;margin-top:6px;overflow:hidden;display:none;
+}
+.suggestion-item{
+  padding:10px 14px;font-size:12px;cursor:pointer;
+  border-bottom:1px solid var(--border);transition:background .15s;
+  display:flex;align-items:flex-start;gap:8px;color:var(--text);
+}
+.suggestion-item:last-child{border:none;}
+.suggestion-item:hover{background:rgba(245,166,35,.06);}
+.suggestion-item .icon{color:var(--accent);font-size:14px;flex-shrink:0;margin-top:1px;}
+.suggestion-item .sname{color:var(--text);}
+.suggestion-item .saddr{font-size:10px;color:var(--muted);margin-top:1px;}
+
+.route-info{
+  display:none;align-items:center;justify-content:space-between;
+  background:rgba(245,166,35,.06);border:1px solid rgba(245,166,35,.2);
+  border-radius:8px;padding:8px 14px;margin-top:8px;
+}
+.route-info.show{display:flex;}
+.ri-val{font-family:'Share Tech Mono',monospace;font-size:14px;color:var(--accent);}
+.ri-lbl{font-size:9px;color:var(--muted);letter-spacing:1px;text-transform:uppercase;}
+.btn-clear-route{
+  background:transparent;border:1px solid var(--red);border-radius:6px;
+  color:var(--red);font-size:10px;padding:4px 10px;cursor:pointer;
+  font-family:'Rajdhani',sans-serif;letter-spacing:1px;
+}
+
+/* ── Status Bar ── */
+.status-bar{
+  display:flex;align-items:center;justify-content:space-between;
+  background:var(--panel);border:1px solid var(--border);
+  border-radius:8px;padding:8px 14px;margin-bottom:10px;
+  font-size:11px;letter-spacing:.5px;box-shadow:var(--card-shadow);
+  transition:background .4s;
+}
+.status-left{display:flex;align-items:center;gap:8px;}
+.dot{width:7px;height:7px;border-radius:50%;background:var(--muted);flex-shrink:0;}
+.dot.gps-ready{background:var(--accent);box-shadow:0 0 8px var(--accent);animation:blink .9s infinite;}
+.dot.gps-active{background:var(--green);box-shadow:0 0 8px var(--green);animation:blink 1.6s infinite;}
+@keyframes blink{0%,100%{opacity:1}50%{opacity:.3}}
+.acc-badge{font-size:10px;padding:2px 7px;border-radius:4px;letter-spacing:.5px;border:1px solid rgba(242,43,69,.3);background:rgba(242,43,69,.07);color:var(--red);}
+.acc-badge.ok{border-color:rgba(0,200,83,.3);background:rgba(0,200,83,.07);color:var(--green);}
+.acc-badge.mid{border-color:rgba(245,166,35,.3);background:rgba(245,166,35,.07);color:var(--accent);}
+
+/* ── Map ── */
+.map-wrapper{
+  position:relative;border-radius:14px;overflow:hidden;
+  border:1px solid var(--border2);margin-bottom:10px;
+  box-shadow:var(--card-shadow);
+}
+#map{height:280px;width:100%;background:var(--panel);}
+.leaflet-tile{filter:var(--tile-filter);transition:filter .5s;}
+.leaflet-container{background:var(--panel) !important;}
+[data-theme="day"] .leaflet-container{background:#e8f0e8 !important;}
+
+.map-tl{
+  position:absolute;top:10px;left:10px;z-index:900;
+  background:var(--surface);border:1px solid var(--border2);
+  border-radius:6px;padding:5px 10px;
+  font-family:'Share Tech Mono',monospace;font-size:10px;color:var(--muted2);
+  backdrop-filter:blur(6px);
+}
+.map-tl span{color:var(--text);}
+.map-tr{position:absolute;top:10px;right:10px;z-index:900;display:flex;flex-direction:column;gap:5px;}
+.map-btn{
+  background:var(--surface);border:1px solid var(--border2);
+  border-radius:6px;color:var(--muted2);font-size:13px;
+  width:32px;height:32px;display:flex;align-items:center;justify-content:center;
+  cursor:pointer;transition:all .2s;backdrop-filter:blur(6px);
+}
+.map-btn:hover{border-color:var(--accent);color:var(--accent);}
+.map-hint{
+  position:absolute;bottom:10px;left:50%;transform:translateX(-50%);z-index:900;
+  background:var(--surface);border:1px solid var(--border);
+  border-radius:20px;padding:5px 14px;font-size:10px;color:var(--muted);
+  white-space:nowrap;backdrop-filter:blur(6px);
+}
+
+/* ── Fare Card ── */
+.fare-card{
+  background:var(--panel);border:1px solid var(--border);
+  border-radius:14px;padding:18px 18px 16px;margin-bottom:10px;
+  position:relative;overflow:hidden;box-shadow:var(--card-shadow);
+  transition:background .4s,border-color .4s;
+}
+.fare-card::before{
+  content:'';position:absolute;top:0;left:0;right:0;height:2px;
+  background:linear-gradient(90deg,transparent,var(--accent),transparent);opacity:.5;
+}
+.fare-card.running{border-color:rgba(245,166,35,.4);box-shadow:0 0 30px rgba(245,166,35,.08);}
+.fare-card.running::before{opacity:1;}
+.fare-lbl{font-size:9px;letter-spacing:3px;color:var(--muted);text-transform:uppercase;margin-bottom:5px;}
+.fare-row{display:flex;align-items:flex-end;gap:4px;}
+.fare-sym{font-family:'Rajdhani',sans-serif;font-size:20px;color:var(--muted);padding-bottom:7px;}
+.fare-num{
+  font-family:'Share Tech Mono',monospace;font-size:58px;color:var(--accent);
+  line-height:1;text-shadow:0 0 40px rgba(245,166,35,.3);letter-spacing:-3px;
+}
+[data-theme="day"] .fare-num{text-shadow:0 2px 8px rgba(245,166,35,.25);}
+
+.stats-row{
+  display:grid;grid-template-columns:repeat(4,1fr);
+  gap:6px;margin-top:14px;padding-top:12px;border-top:1px solid var(--border);
+}
+.stat{text-align:center;}
+.stat .v{font-family:'Share Tech Mono',monospace;font-size:14px;color:var(--text);}
+.stat .l{font-size:8px;color:var(--muted);letter-spacing:1px;text-transform:uppercase;margin-top:2px;}
+.dist-bar{height:2px;background:var(--border);border-radius:1px;margin-top:10px;overflow:hidden;}
+.dist-fill{height:100%;background:linear-gradient(90deg,var(--accent2),var(--accent));width:0%;transition:width .6s;border-radius:1px;}
+
+/* ── Controls ── */
+.controls{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:10px;}
+.btn{
+  padding:14px;border:1px solid var(--border);border-radius:10px;
+  font-family:'Rajdhani',sans-serif;font-size:15px;font-weight:700;
+  letter-spacing:2px;text-transform:uppercase;cursor:pointer;transition:all .2s;
+  background:var(--panel);color:var(--muted);
+}
+.btn:hover:not(:disabled){border-color:var(--accent);color:var(--accent);}
+.btn-start{background:var(--accent);border-color:var(--accent);color:#000 !important;box-shadow:0 4px 20px rgba(245,166,35,.3);}
+.btn-start:hover:not(:disabled){box-shadow:0 4px 32px rgba(245,166,35,.5);transform:translateY(-1px);}
+.btn-stop{border-color:var(--red);color:var(--red) !important;}
+.btn-stop:hover:not(:disabled){background:rgba(242,43,69,.08);}
+.btn:disabled{opacity:.3;cursor:not-allowed;}
+
+/* ── Settings Panel ── */
+.panel-box{
+  background:var(--panel);border:1px solid var(--border);
+  border-radius:12px;padding:14px 16px;margin-bottom:10px;
+  box-shadow:var(--card-shadow);transition:background .4s,border-color .4s;
+}
+.set-row{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;}
+.set-row:last-child{margin-bottom:0;}
+.set-lbl{font-size:12px;color:var(--muted2);}
+.set-lbl small{color:var(--muted);font-size:10px;}
+.inp-wrap{display:flex;align-items:center;background:var(--input-bg);border:1px solid var(--border);border-radius:6px;overflow:hidden;}
+.inp-wrap input,.inp-wrap select{
+  background:transparent;border:none;outline:none;color:var(--text);
+  font-family:'Share Tech Mono',monospace;font-size:13px;padding:6px 10px;width:86px;
+}
+.inp-wrap select{width:136px;font-family:'Exo 2',sans-serif;font-size:12px;}
+.inp-wrap .u{padding:0 8px 0 0;color:var(--muted);font-size:10px;white-space:nowrap;}
+
+/* ── Voice Toggle ── */
+.voice-row{display:flex;align-items:center;justify-content:space-between;}
+.toggle{width:40px;height:22px;background:var(--border2);border-radius:11px;position:relative;cursor:pointer;transition:background .3s;flex-shrink:0;}
+.toggle.on{background:var(--accent);}
+.toggle::after{content:'';position:absolute;top:3px;left:3px;width:16px;height:16px;border-radius:50%;background:#fff;transition:left .3s;box-shadow:0 1px 4px rgba(0,0,0,.3);}
+.toggle.on::after{left:21px;}
+
+/* ── Log ── */
+.log-list{max-height:80px;overflow-y:auto;scrollbar-width:thin;scrollbar-color:var(--border) transparent;}
+.log-item{
+  font-family:'Share Tech Mono',monospace;font-size:10px;color:var(--muted);
+  padding:3px 0;border-bottom:1px solid var(--border);
+  display:flex;justify-content:space-between;gap:8px;
+}
+.log-item .t{color:var(--accent);opacity:.7;flex-shrink:0;}
+.log-item .e{color:var(--text2);opacity:.85;}
+
+/* ── Receipt ── */
+.receipt{
+  background:var(--panel);border:1px solid var(--accent);
+  border-radius:12px;padding:20px;margin-bottom:10px;display:none;
+  position:relative;box-shadow:var(--card-shadow);
+  transition:background .4s;
+}
+.receipt::before{content:'✓ TRIP COMPLETE';position:absolute;top:12px;right:14px;font-size:9px;letter-spacing:2px;color:var(--green);}
+.rec-title{font-family:'Rajdhani',sans-serif;font-size:22px;font-weight:700;color:var(--accent);margin-bottom:12px;}
+.rec-row{display:flex;justify-content:space-between;padding:5px 0;font-size:12px;border-bottom:1px dotted var(--border);}
+.rec-row:last-child{border:none;}
+.rec-row .k{color:var(--muted2);}
+.rec-row .v{font-family:'Share Tech Mono',monospace;color:var(--text);}
+.rec-total{margin-top:10px;padding-top:10px;border-top:1px solid var(--accent);display:flex;justify-content:space-between;font-family:'Rajdhani',sans-serif;font-size:26px;font-weight:700;color:var(--accent);}
+
+/* ── Toast ── */
+.toast{
+  position:fixed;bottom:20px;left:50%;
+  transform:translateX(-50%) translateY(80px);
+  background:var(--panel);border:1px solid var(--border);
+  border-radius:8px;padding:10px 18px;font-size:12px;letter-spacing:.5px;
+  transition:transform .3s cubic-bezier(.175,.885,.32,1.275);z-index:9999;
+  box-shadow:0 8px 30px rgba(0,0,0,.3);white-space:nowrap;color:var(--text);
+}
+.toast.show{transform:translateX(-50%) translateY(0);}
+.toast.ok{border-color:var(--green);color:var(--green);}
+.toast.err{border-color:var(--red);color:var(--red);}
+
+.footer{text-align:center;font-size:10px;color:var(--muted);letter-spacing:1px;padding-top:6px;}
+
+/* ── Leaflet popup theme ── */
+[data-theme="night"] .leaflet-popup-content-wrapper{background:#0d1117 !important;border:1px solid #243040 !important;color:#dce5f0 !important;}
+[data-theme="day"]   .leaflet-popup-content-wrapper{background:#ffffff !important;border:1px solid #c5d4e0 !important;color:#1a2535 !important;}
+.leaflet-popup-content-wrapper{border-radius:8px !important;font-family:'Share Tech Mono',monospace !important;font-size:11px !important;box-shadow:0 4px 20px rgba(0,0,0,.2) !important;}
+[data-theme="night"] .leaflet-popup-tip{background:#0d1117 !important;}
+[data-theme="day"]   .leaflet-popup-tip{background:#ffffff !important;}
+
+/* Scrollbar */
+::-webkit-scrollbar{width:4px;}
+::-webkit-scrollbar-track{background:transparent;}
+::-webkit-scrollbar-thumb{background:var(--border);border-radius:2px;}
+</style>
+</head>
+<body>
+<div class="app">
+
+  <!-- Header with theme switch -->
+  <div class="header">
+    <div class="logo-badge">● TAXIMETER PRO</div>
+    <h1>TAXI<span>METER</span> PRO</h1>
+    <div class="tagline">GPS · Navigation · Voice · Worldwide</div>
+    <div class="theme-switch" onclick="toggleTheme()" title="Switch day/night">
+      <span class="icon" id="themeIcon">🌙</span>
+      <div class="theme-pill" id="themePill"></div>
+      <span class="lbl" id="themeLbl">NIGHT</span>
+    </div>
+  </div>
+
+  <!-- Country / Currency Banner -->
+  <div class="country-banner">
+    <div class="country-left">
+      <div class="country-flag" id="cFlag">🌍</div>
+      <div>
+        <div class="country-name" id="cName">Detecting location…</div>
+        <div class="country-sub" id="cSub">Tap detect to auto-set currency</div>
+      </div>
+    </div>
+    <div style="display:flex;align-items:center;gap:8px;">
+      <div class="currency-chip" id="cChip">$</div>
+      <button class="detect-btn" onclick="detectCountry()">📡 DETECT</button>
+    </div>
+  </div>
+
+  <!-- Nav instruction banner -->
+  <div class="nav-banner" id="navBanner">
+    <div class="nav-arrow" id="navArrow">⬆</div>
+    <div>
+      <div class="nav-instruction" id="navInstruction">Head north</div>
+      <div class="nav-dist" id="navDist">—</div>
+      <div class="nav-street" id="navStreet">—</div>
+    </div>
+  </div>
+
+  <!-- Destination search -->
+  <div class="dest-box">
+    <div class="panel-title">Set Destination</div>
+    <div class="search-row">
+      <input class="search-input" id="destInput" placeholder="Search city, street, place…" autocomplete="off" onkeydown="if(event.key==='Enter')searchDest()">
+      <button class="btn-search" onclick="searchDest()">SEARCH</button>
+    </div>
+    <div class="search-hint">or <span onclick="enableMapClick()">tap on map</span> to pin destination</div>
+    <div class="suggestions" id="suggestions"></div>
+    <div class="route-info" id="routeInfo">
+      <div class="ri-item" style="text-align:center"><div class="ri-val" id="riDist">—</div><div class="ri-lbl">km</div></div>
+      <div class="ri-item" style="text-align:center"><div class="ri-val" id="riTime">—</div><div class="ri-lbl">Est. time</div></div>
+      <div class="ri-item" style="text-align:center"><div class="ri-val" id="riTurns">—</div><div class="ri-lbl">Turns</div></div>
+      <button class="btn-clear-route" onclick="clearRoute()">CLEAR</button>
+    </div>
+  </div>
+
+  <!-- Status -->
+  <div class="status-bar">
+    <div class="status-left">
+      <div class="dot" id="gpsDot"></div>
+      <span id="gpsLabel" style="color:var(--muted)">GPS NOT READY</span>
+    </div>
+    <div class="acc-badge" id="accBadge">NO FIX</div>
+  </div>
+
+  <!-- Map -->
+  <div class="map-wrapper">
+    <div id="map"></div>
+    <div class="map-tl">LAT <span id="latVal">—</span> &nbsp;LON <span id="lonVal">—</span></div>
+    <div class="map-tr">
+      <div class="map-btn" title="Center" onclick="centerMap()">◎</div>
+      <div class="map-btn" title="Clear path" onclick="clearTripPath()">✕</div>
+    </div>
+    <div class="map-hint" id="mapHint">Tap map to set destination</div>
+  </div>
+
+  <!-- Fare -->
+  <div class="fare-card" id="fareCard">
+    <div class="fare-lbl">CURRENT FARE</div>
+    <div class="fare-row">
+      <span class="fare-sym" id="fareSym">$</span>
+      <span class="fare-num" id="fareNum">0.00</span>
+    </div>
+    <div class="dist-bar"><div class="dist-fill" id="distFill"></div></div>
+    <div class="stats-row">
+      <div class="stat"><div class="v" id="stDist">0.00</div><div class="l">km</div></div>
+      <div class="stat"><div class="v" id="stTime">00:00</div><div class="l">time</div></div>
+      <div class="stat"><div class="v" id="stSpeed">0</div><div class="l">km/h</div></div>
+      <div class="stat"><div class="v" id="stWait">0:00</div><div class="l">wait</div></div>
+    </div>
+  </div>
+
+  <!-- Controls -->
+  <div class="controls">
+    <button class="btn btn-start" id="btnStart" onclick="startRide()">▶ START</button>
+    <button class="btn btn-stop"  id="btnStop"  onclick="stopRide()" disabled>■ END RIDE</button>
+  </div>
+
+  <!-- Settings -->
+  <div class="panel-box">
+    <div class="panel-title">Fare Settings</div>
+    <div class="set-row">
+      <div class="set-lbl">Currency</div>
+      <div class="inp-wrap">
+        <select id="selCurrency" onchange="onCurrencyChange()">
+          <option value="USD|$|US">🇺🇸 USD — US Dollar ($)</option>
+          <option value="EUR|€|EU">🇪🇺 EUR — Euro (€)</option>
+          <option value="GBP|£|GB">🇬🇧 GBP — Pound (£)</option>
+          <option value="AED|د.إ|AE">🇦🇪 AED — Dirham</option>
+          <option value="SAR|﷼|SA">🇸🇦 SAR — Riyal</option>
+          <option value="EGP|E£|EG">🇪🇬 EGP — Egyptian Pound</option>
+          <option value="MAD|د.م|MA">🇲🇦 MAD — Moroccan Dirham</option>
+          <option value="DZD|دج|DZ">🇩🇿 DZD — Algerian Dinar</option>
+          <option value="TND|د.ت|TN">🇹🇳 TND — Tunisian Dinar</option>
+          <option value="LYD|ل.د|LY">🇱🇾 LYD — Libyan Dinar</option>
+          <option value="TRY|₺|TR">🇹🇷 TRY — Turkish Lira (₺)</option>
+          <option value="INR|₹|IN">🇮🇳 INR — Indian Rupee (₹)</option>
+          <option value="PKR|₨|PK">🇵🇰 PKR — Pakistani Rupee</option>
+          <option value="BDT|৳|BD">🇧🇩 BDT — Bangladeshi Taka</option>
+          <option value="LKR|₨|LK">🇱🇰 LKR — Sri Lankan Rupee</option>
+          <option value="NPR|₨|NP">🇳🇵 NPR — Nepalese Rupee</option>
+          <option value="NGN|₦|NG">🇳🇬 NGN — Nigerian Naira (₦)</option>
+          <option value="KES|KSh|KE">🇰🇪 KES — Kenyan Shilling</option>
+          <option value="GHS|₵|GH">🇬🇭 GHS — Ghanaian Cedi (₵)</option>
+          <option value="ZAR|R|ZA">🇿🇦 ZAR — South African Rand (R)</option>
+          <option value="ETB|Br|ET">🇪🇹 ETB — Ethiopian Birr</option>
+          <option value="TZS|TSh|TZ">🇹🇿 TZS — Tanzanian Shilling</option>
+          <option value="UGX|USh|UG">🇺🇬 UGX — Ugandan Shilling</option>
+          <option value="XOF|CFA|SN">🇸🇳 XOF — West African CFA</option>
+          <option value="BRL|R$|BR">🇧🇷 BRL — Brazilian Real</option>
+          <option value="MXN|$|MX">🇲🇽 MXN — Mexican Peso ($)</option>
+          <option value="COP|$|CO">🇨🇴 COP — Colombian Peso</option>
+          <option value="ARS|$|AR">🇦🇷 ARS — Argentine Peso</option>
+          <option value="JPY|¥|JP">🇯🇵 JPY — Japanese Yen (¥)</option>
+          <option value="CNY|¥|CN">🇨🇳 CNY — Chinese Yuan (¥)</option>
+          <option value="KRW|₩|KR">🇰🇷 KRW — South Korean Won (₩)</option>
+          <option value="IDR|Rp|ID">🇮🇩 IDR — Indonesian Rupiah</option>
+          <option value="PHP|₱|PH">🇵🇭 PHP — Philippine Peso (₱)</option>
+          <option value="THB|฿|TH">🇹🇭 THB — Thai Baht (฿)</option>
+          <option value="MYR|RM|MY">🇲🇾 MYR — Malaysian Ringgit</option>
+          <option value="SGD|S$|SG">🇸🇬 SGD — Singapore Dollar</option>
+          <option value="VND|₫|VN">🇻🇳 VND — Vietnamese Dong (₫)</option>
+          <option value="IQD|ع.د|IQ">🇮🇶 IQD — Iraqi Dinar</option>
+          <option value="IRR|﷼|IR">🇮🇷 IRR — Iranian Rial</option>
+          <option value="JOD|د.ا|JO">🇯🇴 JOD — Jordanian Dinar</option>
+          <option value="KWD|د.ك|KW">🇰🇼 KWD — Kuwaiti Dinar</option>
+          <option value="QAR|﷼|QA">🇶🇦 QAR — Qatari Riyal</option>
+          <option value="OMR|﷼|OM">🇴🇲 OMR — Omani Rial</option>
+          <option value="BHD|BD|BH">🇧🇭 BHD — Bahraini Dinar</option>
+          <option value="RUB|₽|RU">🇷🇺 RUB — Russian Ruble (₽)</option>
+          <option value="UAH|₴|UA">🇺🇦 UAH — Ukrainian Hryvnia (₴)</option>
+          <option value="PLN|zł|PL">🇵🇱 PLN — Polish Zloty</option>
+          <option value="CZK|Kč|CZ">🇨🇿 CZK — Czech Koruna</option>
+          <option value="HUF|Ft|HU">🇭🇺 HUF — Hungarian Forint</option>
+          <option value="RON|lei|RO">🇷🇴 RON — Romanian Leu</option>
+          <option value="CAD|C$|CA">🇨🇦 CAD — Canadian Dollar</option>
+          <option value="AUD|A$|AU">🇦🇺 AUD — Australian Dollar</option>
+          <option value="NZD|NZ$|NZ">🇳🇿 NZD — New Zealand Dollar</option>
+          <option value="CHF|Fr|CH">🇨🇭 CHF — Swiss Franc</option>
+          <option value="SEK|kr|SE">🇸🇪 SEK — Swedish Krona</option>
+          <option value="NOK|kr|NO">🇳🇴 NOK — Norwegian Krone</option>
+          <option value="DKK|kr|DK">🇩🇰 DKK — Danish Krone</option>
+        </select>
+      </div>
+    </div>
+    <div class="set-row">
+      <div class="set-lbl">Base Fare</div>
+      <div class="inp-wrap"><input type="number" id="inBase" value="2.50" step="0.10" min="0"><span class="u" id="u1">$</span></div>
+    </div>
+    <div class="set-row">
+      <div class="set-lbl">Per KM</div>
+      <div class="inp-wrap"><input type="number" id="inKm" value="1.20" step="0.05" min="0"><span class="u" id="u2">$/km</span></div>
+    </div>
+    <div class="set-row">
+      <div class="set-lbl">Waiting <small>per min</small></div>
+      <div class="inp-wrap"><input type="number" id="inWait" value="0.30" step="0.05" min="0"><span class="u" id="u3">$/min</span></div>
+    </div>
+    <div class="set-row">
+      <div class="set-lbl">Wait Threshold <small>km/h</small></div>
+      <div class="inp-wrap"><input type="number" id="inThresh" value="5" step="1" min="1" max="30"><span class="u">km/h</span></div>
+    </div>
+    <div class="set-row voice-row">
+      <div class="set-lbl">🔊 Voice Navigation</div>
+      <div class="toggle on" id="voiceToggle" onclick="toggleVoice()"></div>
+    </div>
+  </div>
+
+  <!-- Log -->
+  <div class="panel-box">
+    <div class="panel-title">Trip Log</div>
+    <div class="log-list" id="logList">
+      <div class="log-item"><span class="t">--:--:--</span><span class="e">Waiting to start…</span></div>
+    </div>
+  </div>
+
+  <!-- Receipt -->
+  <div class="receipt" id="receipt">
+    <div class="rec-title">TRIP RECEIPT</div>
+    <div class="rec-row"><span class="k">Date / Time</span><span class="v" id="rDate">—</span></div>
+    <div class="rec-row"><span class="k">Distance</span><span class="v" id="rDist">—</span></div>
+    <div class="rec-row"><span class="k">Duration</span><span class="v" id="rDur">—</span></div>
+    <div class="rec-row"><span class="k">Base Fare</span><span class="v" id="rBase">—</span></div>
+    <div class="rec-row"><span class="k">Distance Charge</span><span class="v" id="rDistC">—</span></div>
+    <div class="rec-row"><span class="k">Waiting Charge</span><span class="v" id="rWaitC">—</span></div>
+    <div class="rec-total"><span>TOTAL</span><span id="rTotal">—</span></div>
+  </div>
+
+  <div class="footer">TAXIMETER PRO · OpenStreetMap © Contributors · OSRM Routing · Free Forever</div>
+</div>
+<div class="toast" id="toast"></div>
+
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<script>
+// ══════════════════════════════════════════
+//  COUNTRY → CURRENCY MAP (60+ countries)
+// ══════════════════════════════════════════
+const COUNTRY_DATA = {
+  US:{name:'United States',flag:'🇺🇸',currency:'USD|$|US'},
+  GB:{name:'United Kingdom',flag:'🇬🇧',currency:'GBP|£|GB'},
+  DE:{name:'Germany',flag:'🇩🇪',currency:'EUR|€|EU'},
+  FR:{name:'France',flag:'🇫🇷',currency:'EUR|€|EU'},
+  IT:{name:'Italy',flag:'🇮🇹',currency:'EUR|€|EU'},
+  ES:{name:'Spain',flag:'🇪🇸',currency:'EUR|€|EU'},
+  NL:{name:'Netherlands',flag:'🇳🇱',currency:'EUR|€|EU'},
+  BE:{name:'Belgium',flag:'🇧🇪',currency:'EUR|€|EU'},
+  PT:{name:'Portugal',flag:'🇵🇹',currency:'EUR|€|EU'},
+  GR:{name:'Greece',flag:'🇬🇷',currency:'EUR|€|EU'},
+  AT:{name:'Austria',flag:'🇦🇹',currency:'EUR|€|EU'},
+  IE:{name:'Ireland',flag:'🇮🇪',currency:'EUR|€|EU'},
+  FI:{name:'Finland',flag:'🇫🇮',currency:'EUR|€|EU'},
+  AE:{name:'UAE',flag:'🇦🇪',currency:'AED|د.إ|AE'},
+  SA:{name:'Saudi Arabia',flag:'🇸🇦',currency:'SAR|﷼|SA'},
+  EG:{name:'Egypt',flag:'🇪🇬',currency:'EGP|E£|EG'},
+  MA:{name:'Morocco',flag:'🇲🇦',currency:'MAD|د.م|MA'},
+  DZ:{name:'Algeria',flag:'🇩🇿',currency:'DZD|دج|DZ'},
+  TN:{name:'Tunisia',flag:'🇹🇳',currency:'TND|د.ت|TN'},
+  LY:{name:'Libya',flag:'🇱🇾',currency:'LYD|ل.د|LY'},
+  TR:{name:'Turkey',flag:'🇹🇷',currency:'TRY|₺|TR'},
+  IN:{name:'India',flag:'🇮🇳',currency:'INR|₹|IN'},
+  PK:{name:'Pakistan',flag:'🇵🇰',currency:'PKR|₨|PK'},
+  BD:{name:'Bangladesh',flag:'🇧🇩',currency:'BDT|৳|BD'},
+  LK:{name:'Sri Lanka',flag:'🇱🇰',currency:'LKR|₨|LK'},
+  NP:{name:'Nepal',flag:'🇳🇵',currency:'NPR|₨|NP'},
+  NG:{name:'Nigeria',flag:'🇳🇬',currency:'NGN|₦|NG'},
+  KE:{name:'Kenya',flag:'🇰🇪',currency:'KES|KSh|KE'},
+  GH:{name:'Ghana',flag:'🇬🇭',currency:'GHS|₵|GH'},
+  ZA:{name:'South Africa',flag:'🇿🇦',currency:'ZAR|R|ZA'},
+  ET:{name:'Ethiopia',flag:'🇪🇹',currency:'ETB|Br|ET'},
+  TZ:{name:'Tanzania',flag:'🇹🇿',currency:'TZS|TSh|TZ'},
+  UG:{name:'Uganda',flag:'🇺🇬',currency:'UGX|USh|UG'},
+  SN:{name:'Senegal',flag:'🇸🇳',currency:'XOF|CFA|SN'},
+  BR:{name:'Brazil',flag:'🇧🇷',currency:'BRL|R$|BR'},
+  MX:{name:'Mexico',flag:'🇲🇽',currency:'MXN|$|MX'},
+  CO:{name:'Colombia',flag:'🇨🇴',currency:'COP|$|CO'},
+  AR:{name:'Argentina',flag:'🇦🇷',currency:'ARS|$|AR'},
+  JP:{name:'Japan',flag:'🇯🇵',currency:'JPY|¥|JP'},
+  CN:{name:'China',flag:'🇨🇳',currency:'CNY|¥|CN'},
+  KR:{name:'South Korea',flag:'🇰🇷',currency:'KRW|₩|KR'},
+  ID:{name:'Indonesia',flag:'🇮🇩',currency:'IDR|Rp|ID'},
+  PH:{name:'Philippines',flag:'🇵🇭',currency:'PHP|₱|PH'},
+  TH:{name:'Thailand',flag:'🇹🇭',currency:'THB|฿|TH'},
+  MY:{name:'Malaysia',flag:'🇲🇾',currency:'MYR|RM|MY'},
+  SG:{name:'Singapore',flag:'🇸🇬',currency:'SGD|S$|SG'},
+  VN:{name:'Vietnam',flag:'🇻🇳',currency:'VND|₫|VN'},
+  IQ:{name:'Iraq',flag:'🇮🇶',currency:'IQD|ع.د|IQ'},
+  IR:{name:'Iran',flag:'🇮🇷',currency:'IRR|﷼|IR'},
+  JO:{name:'Jordan',flag:'🇯🇴',currency:'JOD|د.ا|JO'},
+  KW:{name:'Kuwait',flag:'🇰🇼',currency:'KWD|د.ك|KW'},
+  QA:{name:'Qatar',flag:'🇶🇦',currency:'QAR|﷼|QA'},
+  OM:{name:'Oman',flag:'🇴🇲',currency:'OMR|﷼|OM'},
+  BH:{name:'Bahrain',flag:'🇧🇭',currency:'BHD|BD|BH'},
+  RU:{name:'Russia',flag:'🇷🇺',currency:'RUB|₽|RU'},
+  UA:{name:'Ukraine',flag:'🇺🇦',currency:'UAH|₴|UA'},
+  PL:{name:'Poland',flag:'🇵🇱',currency:'PLN|zł|PL'},
+  CZ:{name:'Czech Republic',flag:'🇨🇿',currency:'CZK|Kč|CZ'},
+  HU:{name:'Hungary',flag:'🇭🇺',currency:'HUF|Ft|HU'},
+  RO:{name:'Romania',flag:'🇷🇴',currency:'RON|lei|RO'},
+  CA:{name:'Canada',flag:'🇨🇦',currency:'CAD|C$|CA'},
+  AU:{name:'Australia',flag:'🇦🇺',currency:'AUD|A$|AU'},
+  NZ:{name:'New Zealand',flag:'🇳🇿',currency:'NZD|NZ$|NZ'},
+  CH:{name:'Switzerland',flag:'🇨🇭',currency:'CHF|Fr|CH'},
+  SE:{name:'Sweden',flag:'🇸🇪',currency:'SEK|kr|SE'},
+  NO:{name:'Norway',flag:'🇳🇴',currency:'NOK|kr|NO'},
+  DK:{name:'Denmark',flag:'🇩🇰',currency:'DKK|kr|DK'},
+};
+
+// ══════════════════════════════════════════
+//  STATE
+// ══════════════════════════════════════════
+const S = {
+  running:false, watchId:null, timer:null,
+  lastPos:null, startTime:null,
+  elapsed:0, dist:0, waitSec:0, speed:0,
+  sym:'$', code:'USD',
+  pathCoords:[],
+  destination:null, route:null, steps:[], currentStep:0,
+  voiceOn:true, mapClickMode:false, lastSpoken:'',
+  theme:'night'
+};
+
+// ══════════════════════════════════════════
+//  THEME
+// ══════════════════════════════════════════
+function toggleTheme(){
+  S.theme = S.theme==='night'?'day':'night';
+  applyTheme();
+  localStorage.setItem('tm_theme', S.theme);
+}
+function applyTheme(){
+  document.documentElement.setAttribute('data-theme', S.theme);
+  const isDay = S.theme==='day';
+  document.getElementById('themeIcon').textContent = isDay ? '☀️' : '🌙';
+  document.getElementById('themeLbl').textContent  = isDay ? 'DAY' : 'NIGHT';
+  // Swap map tiles to light/dark
+  if(window._tileLayer){
+    const url = isDay
+      ? 'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png'
+      : 'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png';
+    // tiles stay same URL, CSS filter handles look
+  }
+  toast(isDay ? '☀️ Day Mode' : '🌙 Night Mode');
+}
+
+// Load saved theme
+const savedTheme = localStorage.getItem('tm_theme') || 'night';
+S.theme = savedTheme;
+applyTheme();
+
+// ══════════════════════════════════════════
+//  MAP
+// ══════════════════════════════════════════
+const map = L.map('map',{zoomControl:false}).setView([25,20],2);
+window._tileLayer = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',{
+  maxZoom:19,
+  attribution:'&copy; <a href="https://www.openstreetmap.org/copyright" style="color:#f5a623">OpenStreetMap</a>'
+}).addTo(map);
+L.control.zoom({position:'bottomright'}).addTo(map);
+
+const tripLine  = L.polyline([],{color:'#f5a623',weight:4,opacity:.85,lineJoin:'round'}).addTo(map);
+const routeLine = L.polyline([],{color:'#2196f3',weight:4,opacity:.5,dashArray:'8 6',lineJoin:'round'}).addTo(map);
+
+function mkIcon(color,size,glow){
+  return L.divIcon({
+    html:`<div style="width:${size}px;height:${size}px;border-radius:50%;background:${color};border:2px solid rgba(0,0,0,.5);box-shadow:0 0 12px ${glow||color}80"></div>`,
+    iconSize:[size,size],iconAnchor:[size/2,size/2],className:''
+  });
+}
+function mkDestIcon(){
+  return L.divIcon({
+    html:`<div style="width:22px;height:30px;position:relative">
+      <div style="width:22px;height:22px;border-radius:50% 50% 50% 0;background:#f22b45;border:2px solid rgba(0,0,0,.4);transform:rotate(-45deg);box-shadow:0 0 14px rgba(242,43,69,.7)"></div>
+    </div>`,
+    iconSize:[22,30],iconAnchor:[11,30],className:''
+  });
+}
+
+let headMarker=null,startMarker=null,destMarker=null,accCircle=null;
+
+map.on('click',e=>{
+  if(!S.mapClickMode)return;
+  setDestination(e.latlng.lat,e.latlng.lng,`${e.latlng.lat.toFixed(4)}, ${e.latlng.lng.toFixed(4)}`);
+  disableMapClick();
+});
+
+// ══════════════════════════════════════════
+//  HELPERS
+// ══════════════════════════════════════════
+const $=id=>document.getElementById(id);
+function pad(n){return String(n).padStart(2,'0');}
+function hhmmss(s){const h=Math.floor(s/3600),m=Math.floor((s%3600)/60),ss=s%60;return h>0?`${pad(h)}:${pad(m)}:${pad(ss)}`:`${pad(m)}:${pad(ss)}`;}
+function haversine(la1,lo1,la2,lo2){const R=6371,dL=(la2-la1)*Math.PI/180,dO=(lo2-lo1)*Math.PI/180,a=Math.sin(dL/2)**2+Math.cos(la1*Math.PI/180)*Math.cos(la2*Math.PI/180)*Math.sin(dO/2)**2;return R*2*Math.atan2(Math.sqrt(a),Math.sqrt(1-a));}
+
+function toast(msg,type){
+  const t=$('toast');t.textContent=msg;
+  t.className=`toast ${type||''} show`;
+  setTimeout(()=>{t.className='toast';},2600);
+}
+function addLog(msg,color){
+  const box=$('logList');
+  const ph=box.querySelector('.log-item');
+  if(ph&&ph.querySelector('.t').textContent==='--:--:--')box.removeChild(ph);
+  const now=new Date().toTimeString().slice(0,8);
+  const d=document.createElement('div');
+  d.className='log-item';
+  d.innerHTML=`<span class="t">${now}</span><span class="e" style="color:${color||'inherit'}">${msg}</span>`;
+  box.appendChild(d);box.scrollTop=box.scrollHeight;
+}
+function calcFare(){
+  const b=parseFloat($('inBase').value)||0,k=parseFloat($('inKm').value)||0,w=parseFloat($('inWait').value)||0;
+  return b+S.dist*k+(S.waitSec/60)*w;
+}
+function updateUI(){
+  $('fareNum').textContent=calcFare().toFixed(2);
+  $('stDist').textContent=S.dist.toFixed(2);
+  $('stSpeed').textContent=Math.round(S.speed);
+  $('stTime').textContent=hhmmss(S.elapsed);
+  const wm=Math.floor(S.waitSec/60),ws=S.waitSec%60;
+  $('stWait').textContent=`${wm}:${pad(ws)}`;
+  $('distFill').style.width=Math.min(S.dist/20*100,100)+'%';
+}
+
+// ══════════════════════════════════════════
+//  CURRENCY
+// ══════════════════════════════════════════
+function onCurrencyChange(){
+  const p=$('selCurrency').value.split('|');
+  S.code=p[0]; S.sym=p[1];
+  $('fareSym').textContent=S.sym;
+  $('u1').textContent=S.sym;
+  $('u2').textContent=`${S.sym}/km`;
+  $('u3').textContent=`${S.sym}/min`;
+  $('cChip').textContent=`${S.sym} ${S.code}`;
+}
+
+function setCurrencyByCode(currencyVal){
+  const sel=$('selCurrency');
+  for(let i=0;i<sel.options.length;i++){
+    if(sel.options[i].value===currencyVal){sel.selectedIndex=i;break;}
+  }
+  onCurrencyChange();
+}
+
+// ══════════════════════════════════════════
+//  COUNTRY DETECTION via GPS reverse geocode
+// ══════════════════════════════════════════
+async function detectCountry(){
+  toast('Detecting your country…');
+  if(!navigator.geolocation){toast('GPS needed for detection','err');return;}
+  navigator.geolocation.getCurrentPosition(async pos=>{
+    try{
+      const {latitude:lat,longitude:lon}=pos.coords;
+      const r=await fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lon}`,{headers:{'Accept-Language':'en'}});
+      const data=await r.json();
+      const cc=(data.address?.country_code||'').toUpperCase();
+      applyCountry(cc, data.address?.country||'Unknown');
+    }catch(e){toast('Detection failed','err');}
+  },()=>toast('GPS permission needed','err'),{timeout:8000});
+}
+
+function applyCountry(cc, countryName){
+  const info = COUNTRY_DATA[cc];
+  if(info){
+    $('cFlag').textContent=info.flag;
+    $('cName').textContent=info.name;
+    $('cSub').textContent=`Auto-detected · ${cc}`;
+    setCurrencyByCode(info.currency);
+    toast(`📍 ${info.name} — ${S.sym} ${S.code}`,'ok');
+    addLog(`Country: ${info.name} · Currency: ${S.code}`,'var(--blue)');
+  } else {
+    $('cFlag').textContent='🌍';
+    $('cName').textContent=countryName||cc;
+    $('cSub').textContent=`Country code: ${cc} · Select currency manually`;
+    toast(`Country: ${cc} — select currency manually`);
+  }
+}
+
+// Also detect from IP as fallback (no GPS needed)
+async function detectCountryByIP(){
+  try{
+    const r=await fetch('https://ipapi.co/json/');
+    const d=await r.json();
+    if(d.country_code){
+      applyCountry(d.country_code, d.country_name);
+    }
+  }catch(e){/* silent fail */}
+}
+
+// ══════════════════════════════════════════
+//  VOICE
+// ══════════════════════════════════════════
+function speak(text){
+  if(!S.voiceOn||!window.speechSynthesis)return;
+  if(text===S.lastSpoken)return;
+  S.lastSpoken=text;
+  window.speechSynthesis.cancel();
+  const u=new SpeechSynthesisUtterance(text);
+  u.rate=.95;u.pitch=1;u.volume=1;
+  const voices=speechSynthesis.getVoices();
+  const eng=voices.find(v=>v.lang.startsWith('en')&&v.name.toLowerCase().includes('google'))||voices.find(v=>v.lang.startsWith('en'));
+  if(eng)u.voice=eng;
+  window.speechSynthesis.speak(u);
+}
+function toggleVoice(){
+  S.voiceOn=!S.voiceOn;
+  $('voiceToggle').className='toggle'+(S.voiceOn?' on':'');
+  toast(S.voiceOn?'🔊 Voice ON':'🔇 Voice OFF');
+}
+
+// ══════════════════════════════════════════
+//  DESTINATION SEARCH
+// ══════════════════════════════════════════
+async function searchDest(){
+  const q=$('destInput').value.trim();
+  if(!q){toast('Enter a destination','err');return;}
+  toast('Searching…');
+  try{
+    const r=await fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(q)}&limit=5`,{headers:{'Accept-Language':'en'}});
+    const data=await r.json();
+    if(!data.length){toast('Place not found','err');return;}
+    showSuggestions(data);
+  }catch(e){toast('Search failed — check connection','err');}
+}
+function showSuggestions(results){
+  const box=$('suggestions');
+  box.innerHTML='';box.style.display='block';
+  results.forEach(p=>{
+    const d=document.createElement('div');
+    d.className='suggestion-item';
+    const name=p.display_name.split(',')[0];
+    const addr=p.display_name.split(',').slice(1,3).join(',').trim();
+    d.innerHTML=`<span class="icon">📍</span><div><div class="sname">${name}</div><div class="saddr">${addr}</div></div>`;
+    d.onclick=()=>{setDestination(parseFloat(p.lat),parseFloat(p.lon),name);box.style.display='none';};
+    box.appendChild(d);
+  });
+}
+async function setDestination(lat,lon,name){
+  S.destination={lat,lon,name};
+  $('destInput').value=name;
+  $('suggestions').style.display='none';
+  if(destMarker)map.removeLayer(destMarker);
+  destMarker=L.marker([lat,lon],{icon:mkDestIcon()})
+    .bindPopup(`<b style="color:#f22b45">📍 ${name}</b>`).addTo(map).openPopup();
+  addLog(`Destination: ${name}`,'var(--blue)');
+  toast(`Destination: ${name}`,'ok');
+  if(S.lastPos)await fetchRoute(S.lastPos.lat,S.lastPos.lon,lat,lon);
+  else map.flyTo([lat,lon],14,{duration:1});
+}
+function enableMapClick(){
+  S.mapClickMode=true;
+  $('mapHint').textContent='👆 Tap map to pin destination';
+  $('mapHint').style.color='var(--accent)';
+  map.getContainer().style.cursor='crosshair';
+  toast('Tap the map to set destination');
+}
+function disableMapClick(){
+  S.mapClickMode=false;
+  $('mapHint').textContent='Tap map to set destination';
+  $('mapHint').style.color='';
+  map.getContainer().style.cursor='';
+}
+
+// ══════════════════════════════════════════
+//  OSRM ROUTING
+// ══════════════════════════════════════════
+async function fetchRoute(fromLat,fromLon,toLat,toLon){
+  try{
+    toast('Calculating route…');
+    const url=`https://router.project-osrm.org/route/v1/driving/${fromLon},${fromLat};${toLon},${toLat}?overview=full&geometries=geojson&steps=true`;
+    const r=await fetch(url);
+    const data=await r.json();
+    if(data.code!=='Ok'||!data.routes.length){toast('No route found','err');return;}
+    S.route=data.routes[0];S.steps=[];S.currentStep=0;
+    data.routes[0].legs.forEach(leg=>{
+      leg.steps.forEach(step=>{
+        S.steps.push({
+          instruction:buildInstruction(step),
+          arrow:getArrow(step.maneuver.type,step.maneuver.modifier),
+          distance:step.distance,
+          name:step.name||'',
+          lat:step.maneuver.location[1],
+          lon:step.maneuver.location[0],
+          type:step.maneuver.type,
+          modifier:step.maneuver.modifier||''
+        });
+      });
+    });
+    const coords=data.routes[0].geometry.coordinates.map(c=>[c[1],c[0]]);
+    routeLine.setLatLngs(coords);
+    map.fitBounds(L.latLngBounds([[fromLat,fromLon],[toLat,toLon]]),{padding:[40,40],animate:true,duration:1});
+    const km=(S.route.distance/1000).toFixed(1);
+    const mins=Math.ceil(S.route.duration/60);
+    const h=Math.floor(mins/60),m=mins%60;
+    const timeStr=h>0?`${h}h ${m}m`:`${m} min`;
+    $('riDist').textContent=km;$('riTime').textContent=timeStr;$('riTurns').textContent=S.steps.length;
+    $('routeInfo').className='route-info show';
+    addLog(`Route: ${km}km · ${timeStr} · ${S.steps.length} turns`,'var(--blue)');
+    if(S.steps.length)updateNavBanner(0);
+    speak(`Route found. ${km} kilometers. ${timeStr}. ${S.steps[0]?.instruction||''}`);
+  }catch(e){toast('Routing failed','err');}
+}
+function buildInstruction(step){
+  const t=step.maneuver.type,m=step.maneuver.modifier||'',n=step.name?`onto ${step.name}`:'';
+  if(t==='depart')return `Head ${m||'forward'} ${n}`;
+  if(t==='arrive')return 'Arrive at destination';
+  if(t==='turn'){
+    if(m.includes('left'))return `Turn left ${n}`;
+    if(m.includes('right'))return `Turn right ${n}`;
+    if(m==='straight')return `Continue straight ${n}`;
+    if(m==='uturn')return `Make a U-turn`;
+    return `Turn ${m} ${n}`;
+  }
+  if(t==='continue')return `Continue ${n}`;
+  if(t==='merge')return `Merge ${m} ${n}`;
+  if(t==='fork')return `Keep ${m} at fork ${n}`;
+  if(t==='roundabout')return `Enter roundabout ${n}`;
+  if(t==='exit roundabout')return `Exit roundabout ${n}`;
+  if(t==='end of road')return `Turn ${m} at end of road`;
+  return `${t} ${m} ${n}`.trim();
+}
+function getArrow(type,mod=''){
+  if(type==='arrive')return '🏁';
+  if(type==='depart')return '⬆';
+  if(type==='roundabout'||type==='rotary')return '🔄';
+  if(mod==='left')return '⬅';
+  if(mod==='right')return '➡';
+  if(mod==='sharp left')return '↰';
+  if(mod==='sharp right')return '↱';
+  if(mod==='slight left')return '↖';
+  if(mod==='slight right')return '↗';
+  if(mod==='uturn')return '↩';
+  return '⬆';
+}
+function updateNavBanner(idx){
+  if(!S.steps.length||idx>=S.steps.length)return;
+  const step=S.steps[idx];
+  $('navBanner').className='nav-banner show';
+  $('navArrow').textContent=step.arrow;
+  $('navInstruction').textContent=step.instruction;
+  $('navStreet').textContent=step.name||'';
+  const dm=step.distance;
+  $('navDist').textContent=dm>=1000?`${(dm/1000).toFixed(1)} km`:`${Math.round(dm)} m`;
+  $('navArrow').className='nav-arrow'+(dm<50?' urgent':'');
+}
+function clearRoute(){
+  routeLine.setLatLngs([]);
+  if(destMarker){map.removeLayer(destMarker);destMarker=null;}
+  S.destination=null;S.route=null;S.steps=[];S.currentStep=0;
+  $('routeInfo').className='route-info';
+  $('navBanner').className='nav-banner';
+  $('destInput').value='';
+  toast('Route cleared');
+}
+
+// ══════════════════════════════════════════
+//  NAV STEP CHECK
+// ══════════════════════════════════════════
+function checkNavStep(lat,lon){
+  if(!S.steps.length||S.currentStep>=S.steps.length)return;
+  for(let i=S.currentStep;i<S.steps.length;i++){
+    const step=S.steps[i];
+    const d=haversine(lat,lon,step.lat,step.lon)*1000;
+    if(d<40){
+      S.currentStep=i+1;
+      if(i+1<S.steps.length){
+        updateNavBanner(i+1);
+        const next=S.steps[i+1];
+        const dist=next.distance>=1000?`${(next.distance/1000).toFixed(1)} kilometers`:`${Math.round(next.distance)} meters`;
+        speak(`In ${dist}, ${next.instruction}`);
+        addLog(`▶ ${next.instruction}`,'var(--blue)');
+      } else {
+        $('navBanner').className='nav-banner show';
+        $('navArrow').textContent='🏁';
+        $('navInstruction').textContent='You have arrived!';
+        $('navDist').textContent='Destination reached';
+        speak('You have arrived at your destination!');
+        addLog('✅ Arrived!','var(--green)');
+      }
+      break;
+    } else if(d<200&&i===S.currentStep){
+      updateNavBanner(i);
+      const warnKey=`w${i}-${Math.floor(d/50)}`;
+      if(warnKey!==S.lastSpoken){
+        S.lastSpoken=warnKey;
+        const dist=d>=1000?`${(d/1000).toFixed(1)} kilometers`:`${Math.round(d)} meters`;
+        speak(`In ${dist}, ${step.instruction}`);
+      }
+      break;
+    }
+  }
+}
+
+// ══════════════════════════════════════════
+//  GPS
+// ══════════════════════════════════════════
+function onPos(pos){
+  const{latitude:lat,longitude:lon,accuracy,speed}=pos.coords;
+  S.speed=speed!=null?speed*3.6:S.speed;
+  $('gpsDot').className='dot gps-active';
+  $('gpsLabel').textContent='GPS ACTIVE';
+  $('gpsLabel').style.color='var(--green)';
+  $('latVal').textContent=lat.toFixed(5);
+  $('lonVal').textContent=lon.toFixed(5);
+  const acc=Math.round(accuracy);
+  if(acc<=10){$('accBadge').className='acc-badge ok';$('accBadge').textContent=`±${acc}m`;}
+  else if(acc<=40){$('accBadge').className='acc-badge mid';$('accBadge').textContent=`±${acc}m`;}
+  else{$('accBadge').className='acc-badge';$('accBadge').textContent=`±${acc}m LOW`;}
+  if(accCircle)map.removeLayer(accCircle);
+  accCircle=L.circle([lat,lon],{radius:accuracy,color:'rgba(245,166,35,.35)',fillColor:'rgba(245,166,35,.04)',fillOpacity:1,weight:1}).addTo(map);
+  if(headMarker)headMarker.setLatLng([lat,lon]);
+  else headMarker=L.marker([lat,lon],{icon:mkIcon('#f5a623',16,'rgba(245,166,35,.7)'),zIndexOffset:1000}).addTo(map);
+  if(S.destination&&!S.route)fetchRoute(lat,lon,S.destination.lat,S.destination.lon);
+  if(S.steps.length)checkNavStep(lat,lon);
+  if(!S.running)return;
+  if(S.lastPos){
+    const d=haversine(S.lastPos.lat,S.lastPos.lon,lat,lon);
+    if(d>0.003&&accuracy<60){
+      S.dist+=d;
+      if(speed==null){const dt=(pos.timestamp-S.lastPos.ts)/3600000;S.speed=dt>0?d/dt:0;}
+      const ll=[lat,lon];S.pathCoords.push(ll);tripLine.addLatLng(ll);
+      map.panTo(ll,{animate:true,duration:.4});
+    }
+  } else {
+    addLog(`GPS fix ±${acc}m — tracking active`,'var(--green)');
+    S.pathCoords=[[lat,lon]];tripLine.setLatLngs([[lat,lon]]);
+    if(startMarker)map.removeLayer(startMarker);
+    startMarker=L.marker([lat,lon],{icon:mkIcon('#00c853',14,'rgba(0,200,83,.7)')})
+      .bindPopup('<b style="color:#00c853">Trip Start</b>').addTo(map);
+    map.flyTo([lat,lon],16,{duration:1.2});
+  }
+  S.lastPos={lat,lon,ts:pos.timestamp};
+  updateUI();
+}
+function onGPSErr(err){
+  const msgs={1:'Location permission denied',2:'GPS unavailable',3:'GPS timeout'};
+  $('gpsDot').className='dot';$('accBadge').className='acc-badge';$('accBadge').textContent='ERROR';
+  $('gpsLabel').textContent='GPS ERROR';$('gpsLabel').style.color='var(--red)';
+  addLog(msgs[err.code]||'GPS error','var(--red)');
+  if(err.code===1){toast(msgs[1],'err');stopRide();}
+}
+
+// ══════════════════════════════════════════
+//  START / STOP
+// ══════════════════════════════════════════
+function startRide(){
+  if(!navigator.geolocation){toast('Geolocation not supported','err');return;}
+  S.running=true;S.lastPos=null;S.startTime=new Date();
+  S.elapsed=0;S.dist=0;S.waitSec=0;S.speed=0;S.pathCoords=[];S.currentStep=0;
+  $('btnStart').disabled=true;$('btnStop').disabled=false;
+  $('fareCard').classList.add('running');$('receipt').style.display='none';
+  $('logList').innerHTML='';
+  tripLine.setLatLngs([]);
+  if(startMarker){map.removeLayer(startMarker);startMarker=null;}
+  onCurrencyChange();updateUI();
+  addLog('Ride started — acquiring GPS…','var(--accent)');
+  S.watchId=navigator.geolocation.watchPosition(onPos,onGPSErr,{enableHighAccuracy:true,maximumAge:1000,timeout:12000});
+  S.timer=setInterval(()=>{
+    S.elapsed++;
+    if(S.speed<(parseFloat($('inThresh').value)||5)&&S.lastPos)S.waitSec++;
+    updateUI();
+  },1000);
+  speak('Ride started');
+  toast('Ride started!','ok');
+}
+function stopRide(){
+  S.running=false;
+  if(S.watchId){navigator.geolocation.clearWatch(S.watchId);S.watchId=null;}
+  if(S.timer){clearInterval(S.timer);S.timer=null;}
+  $('btnStart').disabled=false;$('btnStop').disabled=true;
+  $('fareCard').classList.remove('running');
+  const fare=calcFare();
+  addLog(`Trip ended — ${S.sym}${fare.toFixed(2)}`,'var(--accent)');
+  if(S.lastPos){
+    L.marker([S.lastPos.lat,S.lastPos.lon],{icon:mkIcon('#f22b45',14,'rgba(242,43,69,.7)')})
+      .bindPopup(`<b style="color:#f22b45">Trip End</b><br>${S.sym}${fare.toFixed(2)}`).addTo(map).openPopup();
+    if(S.pathCoords.length>1)map.fitBounds(tripLine.getBounds(),{padding:[30,30],animate:true,duration:1});
+  }
+  speak(`Trip ended. Total fare ${fare.toFixed(2)} ${S.code}`);
+  showReceipt(fare);
+  toast(`Fare: ${S.sym}${fare.toFixed(2)}`,'ok');
+}
+
+// ══════════════════════════════════════════
+//  RECEIPT
+// ══════════════════════════════════════════
+function showReceipt(fare){
+  const b=parseFloat($('inBase').value)||0,k=parseFloat($('inKm').value)||0,w=parseFloat($('inWait').value)||0;
+  $('rDate').textContent=new Date().toLocaleString();
+  $('rDist').textContent=`${S.dist.toFixed(3)} km`;
+  $('rDur').textContent=hhmmss(S.elapsed);
+  $('rBase').textContent=`${S.sym}${b.toFixed(2)}`;
+  $('rDistC').textContent=`${S.sym}${(S.dist*k).toFixed(2)}`;
+  $('rWaitC').textContent=`${S.sym}${((S.waitSec/60)*w).toFixed(2)}`;
+  $('rTotal').textContent=`${S.sym}${fare.toFixed(2)}`;
+  $('receipt').style.display='block';
+  $('receipt').scrollIntoView({behavior:'smooth',block:'nearest'});
+}
+
+function centerMap(){if(S.lastPos)map.flyTo([S.lastPos.lat,S.lastPos.lon],Math.max(map.getZoom(),15),{duration:.8});}
+function clearTripPath(){tripLine.setLatLngs([]);S.pathCoords=[];if(startMarker){map.removeLayer(startMarker);startMarker=null;}toast('Path cleared');}
+
+// ══════════════════════════════════════════
+//  INIT
+// ══════════════════════════════════════════
+onCurrencyChange();
+if(window.speechSynthesis){speechSynthesis.getVoices();speechSynthesis.onvoiceschanged=()=>speechSynthesis.getVoices();}
+
+// Auto-detect country on load via IP
+detectCountryByIP();
+
+// Pre-warm GPS
+navigator.geolocation&&navigator.geolocation.getCurrentPosition(
+  p=>{
+    $('gpsDot').className='dot gps-ready';
+    $('gpsLabel').textContent='GPS READY';
+    $('gpsLabel').style.color='var(--accent)';
+    const acc=Math.round(p.coords.accuracy);
+    $('accBadge').className='acc-badge mid';$('accBadge').textContent=`±${acc}m`;
+    $('latVal').textContent=p.coords.latitude.toFixed(5);
+    $('lonVal').textContent=p.coords.longitude.toFixed(5);
+    map.flyTo([p.coords.latitude,p.coords.longitude],14,{duration:1.5});
+    if(headMarker)headMarker.setLatLng([p.coords.latitude,p.coords.longitude]);
+    else headMarker=L.marker([p.coords.latitude,p.coords.longitude],{icon:mkIcon('#f5a623',16,'rgba(245,166,35,.6)')}).addTo(map);
+    S.lastPos={lat:p.coords.latitude,lon:p.coords.longitude,ts:p.timestamp};
+  },
+  ()=>{},
+  {timeout:6000}
+);
+</script>
+</body>
+</html>
