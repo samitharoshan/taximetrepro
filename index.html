@@ -1,1179 +1,974 @@
 <!DOCTYPE html>
-<html lang="en" data-theme="night">
+<html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
-<title>TaxiMeter Pro</title>
-<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
-<link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@500;600;700&family=Share+Tech+Mono&family=Exo+2:wght@300;400;600&display=swap" rel="stylesheet">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<!-- SEO Meta Tags -->
+<title>Ceylon Cinnamon Stories — The True Cinnamon from Sri Lanka | ceylon.food</title>
+<meta name="description" content="Discover the ancient stories behind Ceylon cinnamon — the world's only true cinnamon, grown in Sri Lanka for over 2,000 years. Learn why Ceylon cinnamon is healthier, rarer, and more precious than regular cinnamon.">
+<meta name="keywords" content="Ceylon cinnamon, true cinnamon, Sri Lanka cinnamon, Cinnamomum verum, Ceylon spices, buy Ceylon cinnamon, organic cinnamon, cinnamon health benefits, cinnamon sticks, real cinnamon">
+<meta name="author" content="ceylon.food">
+<meta name="robots" content="index, follow">
+<link rel="canonical" href="https://ceylon.food/stories">
+
+<!-- Open Graph (Facebook, WhatsApp) -->
+<meta property="og:title" content="Ceylon Cinnamon Stories — The True Cinnamon from Sri Lanka">
+<meta property="og:description" content="Discover the ancient stories behind Ceylon cinnamon, the world's rarest and most precious spice, grown in Sri Lanka for over 2,000 years.">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://ceylon.food/stories">
+<meta property="og:site_name" content="ceylon.food">
+
+<!-- Twitter Card -->
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Ceylon Cinnamon Stories | ceylon.food">
+<meta name="twitter:description" content="The world's only true cinnamon — grown in Sri Lanka for 2,000 years. Discover our stories.">
+
+<!-- Schema.org Structured Data (boosts Google rich results) -->
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "Store",
+  "name": "ceylon.food",
+  "url": "https://ceylon.food",
+  "description": "Premium Ceylon cinnamon and spices direct from Sri Lanka",
+  "address": {
+    "@type": "PostalAddress",
+    "addressCountry": "LK"
+  },
+  "sameAs": ["https://ceylon.food"]
+}
+</script>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "Article",
+  "headline": "Ceylon Cinnamon — The True Cinnamon from Sri Lanka",
+  "description": "The ancient history, health benefits, and unique qualities of Ceylon cinnamon, the world's only true cinnamon grown in Sri Lanka.",
+  "author": {"@type": "Organization", "name": "ceylon.food"},
+  "publisher": {"@type": "Organization", "name": "ceylon.food"},
+  "mainEntityOfPage": "https://ceylon.food/stories"
+}
+</script>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "mainEntity": [
+    {
+      "@type": "Question",
+      "name": "What is Ceylon cinnamon?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Ceylon cinnamon (Cinnamomum verum) is the only true cinnamon in the world, grown exclusively in Sri Lanka. Unlike Cassia cinnamon sold in most supermarkets, Ceylon cinnamon has a delicate, sweet flavour and extremely low levels of coumarin, making it safe for daily use."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Why is Ceylon cinnamon better than regular cinnamon?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Ceylon cinnamon contains up to 1,200 times less coumarin than Cassia cinnamon. High coumarin intake can damage the liver over time. Ceylon cinnamon is the only cinnamon variety recommended for regular daily consumption by European food safety authorities."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Where does Ceylon cinnamon come from?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Ceylon cinnamon grows naturally in the wet lowlands of Sri Lanka, particularly in the Matara, Galle, and Kalutara districts. Sri Lanka produces over 80% of the world's true Ceylon cinnamon."
+      }
+    }
+  ]
+}
+</script>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=Source+Serif+4:ital,opsz,wght@0,8..60,300;0,8..60,400;1,8..60,300&display=swap" rel="stylesheet">
+
 <style>
-/* ══════════════════════════════════
-   THEME VARIABLES — Night & Day
-══════════════════════════════════ */
-[data-theme="night"] {
-  --bg:#080b0f; --panel:#0d1117; --panel2:#111820;
-  --border:#1a2230; --border2:#243040;
-  --text:#dce5f0; --text2:#a0b0c8; --muted:#4a5a70; --muted2:#6a7a90;
-  --surface:#13192280; --card-shadow:0 8px 40px rgba(0,0,0,.6);
-  --tile-filter:brightness(.88) saturate(.7) hue-rotate(200deg);
-  --input-bg:#111820;
-  --theme-icon:🌙;
-}
-[data-theme="day"] {
-  --bg:#f0f4f8; --panel:#ffffff; --panel2:#f7fafc;
-  --border:#d8e2ec; --border2:#c5d4e0;
-  --text:#1a2535; --text2:#3a4f6a; --muted:#8fa5bc; --muted2:#6a85a0;
-  --surface:#ffffffcc; --card-shadow:0 4px 20px rgba(0,0,0,.1);
-  --tile-filter:brightness(1) saturate(1) hue-rotate(0deg);
-  --input-bg:#f0f4f8;
-  --theme-icon:☀️;
-}
+  :root {
+    --brown-dark: #2C1A0E;
+    --brown-mid: #5C3317;
+    --brown-warm: #8B4513;
+    --cinnamon: #C0672A;
+    --cinnamon-light: #E8904A;
+    --cream: #FAF6F0;
+    --cream-dark: #F0E8DA;
+    --gold: #B8860B;
+    --gold-light: #D4A843;
+    --text-dark: #1A0F08;
+    --text-mid: #4A2C1A;
+    --text-muted: #7A5C44;
+    --white: #FFFDF9;
+  }
 
-/* Shared accent colors */
-:root {
-  --accent:#f5a623; --accent2:#e8420a;
-  --green:#00c853; --red:#f22b45; --blue:#2196f3;
-}
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
-*{margin:0;padding:0;box-sizing:border-box;}
-html,body{height:100%;font-family:'Exo 2',sans-serif;overflow-x:hidden;transition:background .4s,color .4s;}
-body{background:var(--bg);color:var(--text);}
+  html { scroll-behavior: smooth; }
 
-/* Night grid bg */
-[data-theme="night"] body::before{
-  content:'';position:fixed;inset:0;
-  background-image:linear-gradient(rgba(245,166,35,.02) 1px,transparent 1px),linear-gradient(90deg,rgba(245,166,35,.02) 1px,transparent 1px);
-  background-size:44px 44px;pointer-events:none;z-index:0;
-}
-/* Day subtle dots */
-[data-theme="day"] body::before{
-  content:'';position:fixed;inset:0;
-  background-image:radial-gradient(circle,rgba(245,166,35,.12) 1px,transparent 1px);
-  background-size:28px 28px;pointer-events:none;z-index:0;
-}
+  body {
+    font-family: 'Source Serif 4', Georgia, serif;
+    background: var(--cream);
+    color: var(--text-dark);
+    font-size: 17px;
+    line-height: 1.75;
+    overflow-x: hidden;
+  }
 
-.app{position:relative;z-index:1;max-width:520px;margin:0 auto;padding:12px 12px 40px;}
+  /* ── NAV ── */
+  nav {
+    position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 18px 48px;
+    background: rgba(250,246,240,0.92);
+    backdrop-filter: blur(12px);
+    border-bottom: 1px solid rgba(192,103,42,0.15);
+  }
+  .nav-logo {
+    font-family: 'Playfair Display', serif;
+    font-size: 22px; font-weight: 700;
+    color: var(--brown-mid);
+    text-decoration: none;
+    letter-spacing: 0.02em;
+  }
+  .nav-logo span { color: var(--cinnamon); }
+  .nav-links { display: flex; gap: 32px; list-style: none; }
+  .nav-links a {
+    font-family: 'Source Serif 4', serif;
+    font-size: 14px; font-weight: 300;
+    color: var(--text-mid);
+    text-decoration: none;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    transition: color 0.2s;
+  }
+  .nav-links a:hover { color: var(--cinnamon); }
+  .nav-cta {
+    background: var(--cinnamon);
+    color: var(--white) !important;
+    padding: 8px 22px;
+    border-radius: 2px;
+    transition: background 0.2s !important;
+  }
+  .nav-cta:hover { background: var(--brown-mid) !important; color: var(--white) !important; }
 
-/* ── Header ── */
-.header{text-align:center;padding:10px 0 14px;position:relative;}
-.logo-badge{font-size:9px;letter-spacing:5px;color:var(--accent);font-family:'Rajdhani',sans-serif;font-weight:600;}
-.header h1{font-family:'Rajdhani',sans-serif;font-size:34px;font-weight:700;letter-spacing:3px;line-height:1;}
-.header h1 span{color:var(--accent);}
-.tagline{font-size:10px;color:var(--muted2);margin-top:3px;letter-spacing:1.5px;}
+  /* ── HERO ── */
+  .hero {
+    min-height: 100vh;
+    display: flex; flex-direction: column; align-items: center; justify-content: center;
+    text-align: center;
+    padding: 120px 24px 80px;
+    position: relative;
+    overflow: hidden;
+    background: var(--brown-dark);
+  }
+  .hero-pattern {
+    position: absolute; inset: 0; opacity: 0.06;
+    background-image: repeating-linear-gradient(45deg, var(--cinnamon) 0, var(--cinnamon) 1px, transparent 0, transparent 50%);
+    background-size: 20px 20px;
+  }
+  .hero-ring {
+    position: absolute;
+    border-radius: 50%;
+    border: 1px solid rgba(192,103,42,0.2);
+  }
+  .hero-ring:nth-child(1) { width: 500px; height: 500px; top: 50%; left: 50%; transform: translate(-50%,-50%); }
+  .hero-ring:nth-child(2) { width: 750px; height: 750px; top: 50%; left: 50%; transform: translate(-50%,-50%); }
+  .hero-ring:nth-child(3) { width: 1000px; height: 1000px; top: 50%; left: 50%; transform: translate(-50%,-50%); }
 
-/* ── Theme Switch ── */
-.theme-switch{
-  position:absolute;top:14px;right:0;
-  display:flex;align-items:center;gap:8px;
-  background:var(--panel);border:1px solid var(--border);
-  border-radius:30px;padding:6px 12px;cursor:pointer;
-  transition:all .3s;box-shadow:var(--card-shadow);
-}
-.theme-switch:hover{border-color:var(--accent);}
-.theme-switch .icon{font-size:16px;transition:transform .4s;}
-.theme-switch .lbl{font-family:'Rajdhani',sans-serif;font-size:11px;font-weight:600;letter-spacing:1px;color:var(--muted2);}
-.theme-pill{
-  width:34px;height:18px;border-radius:9px;background:var(--border2);
-  position:relative;transition:background .3s;
-}
-[data-theme="day"] .theme-pill{background:var(--accent);}
-.theme-pill::after{
-  content:'';position:absolute;top:3px;left:3px;
-  width:12px;height:12px;border-radius:50%;background:#fff;
-  transition:left .3s;
-}
-[data-theme="day"] .theme-pill::after{left:19px;}
+  .hero-eyebrow {
+    font-family: 'Source Serif 4', serif;
+    font-size: 12px; font-weight: 300;
+    letter-spacing: 0.3em; text-transform: uppercase;
+    color: var(--cinnamon-light);
+    margin-bottom: 24px;
+    animation: fadeUp 1s ease both;
+  }
+  .hero h1 {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(42px, 7vw, 88px);
+    font-weight: 700;
+    color: var(--white);
+    line-height: 1.08;
+    letter-spacing: -0.02em;
+    max-width: 820px;
+    margin-bottom: 12px;
+    animation: fadeUp 1s ease 0.15s both;
+  }
+  .hero h1 em {
+    font-style: italic;
+    color: var(--cinnamon-light);
+  }
+  .hero-sub {
+    font-size: 19px; font-weight: 300;
+    color: rgba(255,253,249,0.7);
+    max-width: 560px;
+    margin: 20px auto 48px;
+    animation: fadeUp 1s ease 0.3s both;
+  }
+  .hero-actions {
+    display: flex; gap: 16px; flex-wrap: wrap; justify-content: center;
+    animation: fadeUp 1s ease 0.45s both;
+  }
+  .btn-primary {
+    background: var(--cinnamon);
+    color: var(--white);
+    padding: 14px 36px;
+    border-radius: 2px;
+    text-decoration: none;
+    font-size: 14px; letter-spacing: 0.1em; text-transform: uppercase;
+    font-family: 'Source Serif 4', serif; font-weight: 400;
+    transition: background 0.2s, transform 0.15s;
+    display: inline-block;
+  }
+  .btn-primary:hover { background: var(--cinnamon-light); transform: translateY(-1px); }
+  .btn-secondary {
+    border: 1px solid rgba(255,253,249,0.35);
+    color: rgba(255,253,249,0.85);
+    padding: 14px 36px;
+    border-radius: 2px;
+    text-decoration: none;
+    font-size: 14px; letter-spacing: 0.1em; text-transform: uppercase;
+    font-family: 'Source Serif 4', serif; font-weight: 400;
+    transition: border-color 0.2s, color 0.2s;
+    display: inline-block;
+  }
+  .btn-secondary:hover { border-color: var(--cinnamon-light); color: var(--cinnamon-light); }
+  .hero-scroll {
+    position: absolute; bottom: 40px; left: 50%; transform: translateX(-50%);
+    display: flex; flex-direction: column; align-items: center; gap: 8px;
+    color: rgba(255,253,249,0.4);
+    font-size: 11px; letter-spacing: 0.2em; text-transform: uppercase;
+    animation: fadeUp 1s ease 0.6s both;
+  }
+  .scroll-line {
+    width: 1px; height: 40px;
+    background: linear-gradient(to bottom, rgba(192,103,42,0.6), transparent);
+    animation: scrollPulse 2s ease-in-out infinite;
+  }
 
-/* ── Country + Currency Banner ── */
-.country-banner{
-  display:flex;align-items:center;justify-content:space-between;
-  background:var(--panel);border:1px solid var(--border);
-  border-radius:10px;padding:9px 14px;margin-bottom:10px;
-  box-shadow:var(--card-shadow);
-}
-.country-left{display:flex;align-items:center;gap:10px;}
-.country-flag{font-size:22px;line-height:1;}
-.country-name{font-family:'Rajdhani',sans-serif;font-size:14px;font-weight:600;color:var(--text);}
-.country-sub{font-size:10px;color:var(--muted2);margin-top:1px;}
-.currency-chip{
-  background:rgba(245,166,35,.1);border:1px solid rgba(245,166,35,.3);
-  border-radius:20px;padding:4px 12px;
-  font-family:'Share Tech Mono',monospace;font-size:13px;color:var(--accent);
-  font-weight:600;
-}
-.detect-btn{
-  font-size:10px;color:var(--muted2);cursor:pointer;letter-spacing:.5px;
-  padding:4px 8px;border:1px solid var(--border);border-radius:4px;
-  background:transparent;font-family:'Exo 2',sans-serif;
-  transition:all .2s;
-}
-.detect-btn:hover{border-color:var(--accent);color:var(--accent);}
+  /* ── DIVIDER ── */
+  .divider {
+    display: flex; align-items: center; justify-content: center;
+    gap: 20px; padding: 48px 0; max-width: 300px; margin: 0 auto;
+  }
+  .divider-line { flex: 1; height: 1px; background: rgba(192,103,42,0.3); }
+  .divider-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--cinnamon); }
 
-/* ── Nav Banner ── */
-.nav-banner{
-  display:none;align-items:center;gap:12px;
-  background:var(--panel);border:1px solid var(--border2);
-  border-radius:12px;padding:12px 16px;margin-bottom:10px;
-  position:relative;overflow:hidden;box-shadow:var(--card-shadow);
-  transition:background .4s,border-color .4s;
-}
-.nav-banner.show{display:flex;}
-.nav-banner::before{content:'';position:absolute;left:0;top:0;bottom:0;width:4px;background:var(--accent);}
-.nav-arrow{
-  width:52px;height:52px;border-radius:10px;
-  background:rgba(245,166,35,.12);border:1px solid rgba(245,166,35,.3);
-  display:flex;align-items:center;justify-content:center;flex-shrink:0;
-  font-size:26px;transition:all .3s;
-}
-.nav-arrow.urgent{background:rgba(242,43,69,.15);border-color:rgba(242,43,69,.4);animation:urgentPulse .6s infinite;}
-@keyframes urgentPulse{0%,100%{transform:scale(1)}50%{transform:scale(1.06);}}
-.nav-instruction{font-family:'Rajdhani',sans-serif;font-size:17px;font-weight:700;color:var(--text);line-height:1.2;}
-.nav-dist{font-size:11px;color:var(--accent);margin-top:3px;letter-spacing:.5px;}
-.nav-street{font-size:11px;color:var(--muted2);margin-top:1px;}
+  /* ── SECTION BASE ── */
+  section { padding: 100px 24px; }
+  .container { max-width: 1100px; margin: 0 auto; }
+  .container-narrow { max-width: 720px; margin: 0 auto; }
+  .section-label {
+    font-size: 11px; letter-spacing: 0.3em; text-transform: uppercase;
+    color: var(--cinnamon); font-weight: 400;
+    margin-bottom: 16px; display: block;
+  }
+  h2 {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(32px, 4vw, 52px);
+    font-weight: 700; line-height: 1.12;
+    color: var(--brown-dark);
+    margin-bottom: 24px;
+  }
+  h2 em { font-style: italic; color: var(--cinnamon); }
+  h3 {
+    font-family: 'Playfair Display', serif;
+    font-size: 26px; font-weight: 700;
+    color: var(--brown-dark); margin-bottom: 12px;
+  }
+  p { color: var(--text-mid); margin-bottom: 18px; }
+  p:last-child { margin-bottom: 0; }
 
-/* ── Destination Box ── */
-.dest-box{
-  background:var(--panel);border:1px solid var(--border);
-  border-radius:12px;padding:14px 16px;margin-bottom:10px;
-  box-shadow:var(--card-shadow);transition:background .4s,border-color .4s;
-}
-.panel-title{
-  font-family:'Rajdhani',sans-serif;font-size:10px;letter-spacing:3px;
-  color:var(--muted);text-transform:uppercase;margin-bottom:10px;
-  display:flex;align-items:center;gap:8px;
-}
-.panel-title::after{content:'';flex:1;height:1px;background:var(--border);}
-.search-row{display:flex;gap:8px;margin-bottom:8px;}
-.search-input{
-  flex:1;background:var(--input-bg);border:1px solid var(--border);
-  border-radius:8px;padding:10px 14px;color:var(--text);
-  font-family:'Exo 2',sans-serif;font-size:13px;outline:none;transition:border-color .2s;
-}
-.search-input:focus{border-color:var(--accent);}
-.search-input::placeholder{color:var(--muted);}
-.btn-search{
-  background:var(--accent);border:none;border-radius:8px;
-  padding:10px 16px;color:#000;font-family:'Rajdhani',sans-serif;
-  font-size:13px;font-weight:700;letter-spacing:1px;cursor:pointer;transition:all .2s;white-space:nowrap;
-}
-.btn-search:hover{box-shadow:0 0 16px rgba(245,166,35,.4);}
-.search-hint{font-size:10px;color:var(--muted);letter-spacing:.5px;}
-.search-hint span{color:var(--accent);cursor:pointer;}
-.search-hint span:hover{text-decoration:underline;}
+  /* ── INTRO SECTION ── */
+  .intro-section { background: var(--white); }
+  .intro-grid {
+    display: grid; grid-template-columns: 1fr 1fr;
+    gap: 80px; align-items: center;
+  }
+  .intro-stats {
+    display: grid; grid-template-columns: 1fr 1fr; gap: 24px;
+    margin-top: 40px;
+  }
+  .stat-card {
+    background: var(--cream);
+    padding: 24px; border-radius: 2px;
+    border-left: 3px solid var(--cinnamon);
+  }
+  .stat-number {
+    font-family: 'Playfair Display', serif;
+    font-size: 38px; font-weight: 700;
+    color: var(--cinnamon); line-height: 1;
+    margin-bottom: 6px;
+  }
+  .stat-label { font-size: 13px; color: var(--text-muted); line-height: 1.4; }
+  .intro-visual {
+    position: relative;
+  }
+  .intro-img-frame {
+    background: var(--cream-dark);
+    border-radius: 2px;
+    aspect-ratio: 4/5;
+    display: flex; align-items: center; justify-content: center;
+    overflow: hidden;
+    position: relative;
+  }
+  .cinnamon-illustration {
+    width: 100%; height: 100%;
+    display: flex; align-items: center; justify-content: center;
+  }
 
-.suggestions{
-  background:var(--panel2);border:1px solid var(--border2);
-  border-radius:8px;margin-top:6px;overflow:hidden;display:none;
-}
-.suggestion-item{
-  padding:10px 14px;font-size:12px;cursor:pointer;
-  border-bottom:1px solid var(--border);transition:background .15s;
-  display:flex;align-items:flex-start;gap:8px;color:var(--text);
-}
-.suggestion-item:last-child{border:none;}
-.suggestion-item:hover{background:rgba(245,166,35,.06);}
-.suggestion-item .icon{color:var(--accent);font-size:14px;flex-shrink:0;margin-top:1px;}
-.suggestion-item .sname{color:var(--text);}
-.suggestion-item .saddr{font-size:10px;color:var(--muted);margin-top:1px;}
+  /* ── STORY SECTION ── */
+  .story-section { background: var(--cream-dark); }
+  .story-timeline { position: relative; padding-left: 0; }
+  .story-timeline::before {
+    content: '';
+    position: absolute; left: 50%; top: 0; bottom: 0;
+    width: 1px; background: rgba(192,103,42,0.3);
+    transform: translateX(-50%);
+  }
+  .story-item {
+    display: grid; grid-template-columns: 1fr 60px 1fr;
+    gap: 0; align-items: start; margin-bottom: 64px;
+  }
+  .story-item:last-child { margin-bottom: 0; }
+  .story-content {
+    padding: 0 40px;
+  }
+  .story-item:nth-child(even) .story-content-left { order: 3; }
+  .story-item:nth-child(even) .story-center { order: 2; }
+  .story-item:nth-child(even) .story-content-right { order: 1; }
+  .story-center {
+    display: flex; flex-direction: column; align-items: center;
+    padding-top: 8px; position: relative;
+  }
+  .story-year {
+    font-family: 'Playfair Display', serif;
+    font-size: 13px; font-weight: 700;
+    color: var(--white);
+    background: var(--cinnamon);
+    padding: 6px 12px; border-radius: 2px;
+    letter-spacing: 0.05em;
+    white-space: nowrap;
+    z-index: 1;
+  }
+  .story-dot {
+    width: 10px; height: 10px; border-radius: 50%;
+    background: var(--cinnamon); margin-top: 12px;
+    flex-shrink: 0;
+  }
+  .story-content-card {
+    background: var(--white);
+    padding: 28px 32px;
+    border-radius: 2px;
+    border-top: 3px solid var(--cinnamon);
+  }
+  .story-content-card h3 { font-size: 20px; margin-bottom: 10px; }
+  .story-content-card p { font-size: 15px; }
+  .story-content-empty { padding: 0 40px; }
 
-.route-info{
-  display:none;align-items:center;justify-content:space-between;
-  background:rgba(245,166,35,.06);border:1px solid rgba(245,166,35,.2);
-  border-radius:8px;padding:8px 14px;margin-top:8px;
-}
-.route-info.show{display:flex;}
-.ri-val{font-family:'Share Tech Mono',monospace;font-size:14px;color:var(--accent);}
-.ri-lbl{font-size:9px;color:var(--muted);letter-spacing:1px;text-transform:uppercase;}
-.btn-clear-route{
-  background:transparent;border:1px solid var(--red);border-radius:6px;
-  color:var(--red);font-size:10px;padding:4px 10px;cursor:pointer;
-  font-family:'Rajdhani',sans-serif;letter-spacing:1px;
-}
+  /* ── WHY CEYLON ── */
+  .why-section { background: var(--brown-dark); }
+  .why-section h2 { color: var(--white); }
+  .why-section .section-label { color: var(--cinnamon-light); }
+  .why-grid {
+    display: grid; grid-template-columns: repeat(3, 1fr); gap: 2px;
+    margin-top: 56px;
+  }
+  .why-card {
+    background: rgba(255,253,249,0.04);
+    padding: 40px 32px;
+    border: 1px solid rgba(192,103,42,0.15);
+    transition: background 0.25s;
+    cursor: default;
+  }
+  .why-card:hover { background: rgba(192,103,42,0.08); }
+  .why-icon {
+    font-size: 32px; margin-bottom: 20px;
+    display: block;
+  }
+  .why-card h3 {
+    color: var(--cream); font-size: 20px; margin-bottom: 12px;
+  }
+  .why-card p { color: rgba(255,253,249,0.6); font-size: 15px; }
+  .why-highlight {
+    background: var(--cinnamon);
+    padding: 40px 32px;
+    border: none;
+  }
+  .why-highlight h3 { color: var(--white); }
+  .why-highlight p { color: rgba(255,253,249,0.85); font-size: 15px; }
 
-/* ── Status Bar ── */
-.status-bar{
-  display:flex;align-items:center;justify-content:space-between;
-  background:var(--panel);border:1px solid var(--border);
-  border-radius:8px;padding:8px 14px;margin-bottom:10px;
-  font-size:11px;letter-spacing:.5px;box-shadow:var(--card-shadow);
-  transition:background .4s;
-}
-.status-left{display:flex;align-items:center;gap:8px;}
-.dot{width:7px;height:7px;border-radius:50%;background:var(--muted);flex-shrink:0;}
-.dot.gps-ready{background:var(--accent);box-shadow:0 0 8px var(--accent);animation:blink .9s infinite;}
-.dot.gps-active{background:var(--green);box-shadow:0 0 8px var(--green);animation:blink 1.6s infinite;}
-@keyframes blink{0%,100%{opacity:1}50%{opacity:.3}}
-.acc-badge{font-size:10px;padding:2px 7px;border-radius:4px;letter-spacing:.5px;border:1px solid rgba(242,43,69,.3);background:rgba(242,43,69,.07);color:var(--red);}
-.acc-badge.ok{border-color:rgba(0,200,83,.3);background:rgba(0,200,83,.07);color:var(--green);}
-.acc-badge.mid{border-color:rgba(245,166,35,.3);background:rgba(245,166,35,.07);color:var(--accent);}
+  /* ── PROCESS SECTION ── */
+  .process-section { background: var(--white); }
+  .process-steps {
+    display: grid; grid-template-columns: repeat(4, 1fr);
+    gap: 0; margin-top: 56px; position: relative;
+  }
+  .process-steps::before {
+    content: '';
+    position: absolute; top: 32px; left: 10%; right: 10%;
+    height: 1px; background: rgba(192,103,42,0.25);
+    z-index: 0;
+  }
+  .process-step { text-align: center; padding: 0 20px; position: relative; z-index: 1; }
+  .step-circle {
+    width: 64px; height: 64px; border-radius: 50%;
+    background: var(--cream-dark);
+    border: 2px solid var(--cinnamon);
+    display: flex; align-items: center; justify-content: center;
+    margin: 0 auto 20px;
+    font-family: 'Playfair Display', serif;
+    font-size: 22px; font-weight: 700;
+    color: var(--cinnamon);
+    position: relative; z-index: 1;
+    transition: background 0.2s;
+  }
+  .process-step:hover .step-circle { background: var(--cinnamon); color: var(--white); }
+  .process-step h3 { font-size: 17px; margin-bottom: 10px; }
+  .process-step p { font-size: 14px; color: var(--text-muted); }
 
-/* ── Map ── */
-.map-wrapper{
-  position:relative;border-radius:14px;overflow:hidden;
-  border:1px solid var(--border2);margin-bottom:10px;
-  box-shadow:var(--card-shadow);
-}
-#map{height:280px;width:100%;background:var(--panel);}
-.leaflet-tile{filter:var(--tile-filter);transition:filter .5s;}
-.leaflet-container{background:var(--panel) !important;}
-[data-theme="day"] .leaflet-container{background:#e8f0e8 !important;}
+  /* ── FAQ SECTION ── */
+  .faq-section { background: var(--cream); }
+  .faq-list { margin-top: 48px; }
+  .faq-item {
+    border-bottom: 1px solid rgba(192,103,42,0.2);
+    padding: 24px 0; cursor: pointer;
+  }
+  .faq-question {
+    display: flex; justify-content: space-between; align-items: center;
+    gap: 24px;
+  }
+  .faq-q-text {
+    font-family: 'Playfair Display', serif;
+    font-size: 18px; font-weight: 700;
+    color: var(--brown-dark);
+    flex: 1;
+  }
+  .faq-toggle {
+    width: 28px; height: 28px; border-radius: 50%;
+    border: 1px solid var(--cinnamon);
+    display: flex; align-items: center; justify-content: center;
+    flex-shrink: 0;
+    color: var(--cinnamon);
+    font-size: 18px; line-height: 1;
+    transition: background 0.2s, color 0.2s;
+    user-select: none;
+  }
+  .faq-item.open .faq-toggle { background: var(--cinnamon); color: var(--white); }
+  .faq-answer {
+    display: none; padding-top: 16px;
+    font-size: 16px; color: var(--text-mid); line-height: 1.75;
+  }
+  .faq-item.open .faq-answer { display: block; }
 
-.map-tl{
-  position:absolute;top:10px;left:10px;z-index:900;
-  background:var(--surface);border:1px solid var(--border2);
-  border-radius:6px;padding:5px 10px;
-  font-family:'Share Tech Mono',monospace;font-size:10px;color:var(--muted2);
-  backdrop-filter:blur(6px);
-}
-.map-tl span{color:var(--text);}
-.map-tr{position:absolute;top:10px;right:10px;z-index:900;display:flex;flex-direction:column;gap:5px;}
-.map-btn{
-  background:var(--surface);border:1px solid var(--border2);
-  border-radius:6px;color:var(--muted2);font-size:13px;
-  width:32px;height:32px;display:flex;align-items:center;justify-content:center;
-  cursor:pointer;transition:all .2s;backdrop-filter:blur(6px);
-}
-.map-btn:hover{border-color:var(--accent);color:var(--accent);}
-.map-hint{
-  position:absolute;bottom:10px;left:50%;transform:translateX(-50%);z-index:900;
-  background:var(--surface);border:1px solid var(--border);
-  border-radius:20px;padding:5px 14px;font-size:10px;color:var(--muted);
-  white-space:nowrap;backdrop-filter:blur(6px);
-}
+  /* ── CTA SECTION ── */
+  .cta-section {
+    background: var(--cinnamon);
+    text-align: center; padding: 100px 24px;
+  }
+  .cta-section .section-label { color: rgba(255,253,249,0.7); }
+  .cta-section h2 { color: var(--white); margin-bottom: 20px; }
+  .cta-section p { color: rgba(255,253,249,0.85); max-width: 560px; margin: 0 auto 40px; }
+  .btn-white {
+    background: var(--white);
+    color: var(--cinnamon);
+    padding: 16px 44px;
+    border-radius: 2px;
+    text-decoration: none;
+    font-size: 14px; letter-spacing: 0.1em; text-transform: uppercase;
+    font-family: 'Source Serif 4', serif; font-weight: 400;
+    transition: background 0.2s, transform 0.15s;
+    display: inline-block;
+    margin: 0 8px 12px;
+  }
+  .btn-white:hover { background: var(--cream); transform: translateY(-1px); }
+  .btn-outline-white {
+    border: 2px solid rgba(255,253,249,0.6);
+    color: var(--white);
+    padding: 14px 44px;
+    border-radius: 2px;
+    text-decoration: none;
+    font-size: 14px; letter-spacing: 0.1em; text-transform: uppercase;
+    font-family: 'Source Serif 4', serif; font-weight: 400;
+    transition: border-color 0.2s;
+    display: inline-block;
+    margin: 0 8px 12px;
+  }
+  .btn-outline-white:hover { border-color: var(--white); }
 
-/* ── Fare Card ── */
-.fare-card{
-  background:var(--panel);border:1px solid var(--border);
-  border-radius:14px;padding:18px 18px 16px;margin-bottom:10px;
-  position:relative;overflow:hidden;box-shadow:var(--card-shadow);
-  transition:background .4s,border-color .4s;
-}
-.fare-card::before{
-  content:'';position:absolute;top:0;left:0;right:0;height:2px;
-  background:linear-gradient(90deg,transparent,var(--accent),transparent);opacity:.5;
-}
-.fare-card.running{border-color:rgba(245,166,35,.4);box-shadow:0 0 30px rgba(245,166,35,.08);}
-.fare-card.running::before{opacity:1;}
-.fare-lbl{font-size:9px;letter-spacing:3px;color:var(--muted);text-transform:uppercase;margin-bottom:5px;}
-.fare-row{display:flex;align-items:flex-end;gap:4px;}
-.fare-sym{font-family:'Rajdhani',sans-serif;font-size:20px;color:var(--muted);padding-bottom:7px;}
-.fare-num{
-  font-family:'Share Tech Mono',monospace;font-size:58px;color:var(--accent);
-  line-height:1;text-shadow:0 0 40px rgba(245,166,35,.3);letter-spacing:-3px;
-}
-[data-theme="day"] .fare-num{text-shadow:0 2px 8px rgba(245,166,35,.25);}
+  /* ── FOOTER ── */
+  footer {
+    background: var(--brown-dark);
+    padding: 60px 48px 40px;
+    color: rgba(255,253,249,0.5);
+  }
+  .footer-grid {
+    display: grid; grid-template-columns: 2fr 1fr 1fr 1fr;
+    gap: 48px; margin-bottom: 48px;
+    max-width: 1100px; margin-left: auto; margin-right: auto;
+  }
+  .footer-brand .nav-logo { font-size: 26px; display: block; margin-bottom: 14px; }
+  .footer-brand p { font-size: 14px; line-height: 1.7; color: rgba(255,253,249,0.45); }
+  .footer-col h4 {
+    font-family: 'Playfair Display', serif;
+    font-size: 14px; font-weight: 700;
+    color: var(--cream); margin-bottom: 16px;
+    letter-spacing: 0.05em;
+  }
+  .footer-col ul { list-style: none; }
+  .footer-col li { margin-bottom: 10px; }
+  .footer-col a {
+    color: rgba(255,253,249,0.45); text-decoration: none;
+    font-size: 14px; transition: color 0.2s;
+  }
+  .footer-col a:hover { color: var(--cinnamon-light); }
+  .footer-bottom {
+    border-top: 1px solid rgba(255,253,249,0.08);
+    padding-top: 28px;
+    display: flex; justify-content: space-between; align-items: center;
+    max-width: 1100px; margin: 0 auto;
+    font-size: 13px;
+  }
 
-.stats-row{
-  display:grid;grid-template-columns:repeat(4,1fr);
-  gap:6px;margin-top:14px;padding-top:12px;border-top:1px solid var(--border);
-}
-.stat{text-align:center;}
-.stat .v{font-family:'Share Tech Mono',monospace;font-size:14px;color:var(--text);}
-.stat .l{font-size:8px;color:var(--muted);letter-spacing:1px;text-transform:uppercase;margin-top:2px;}
-.dist-bar{height:2px;background:var(--border);border-radius:1px;margin-top:10px;overflow:hidden;}
-.dist-fill{height:100%;background:linear-gradient(90deg,var(--accent2),var(--accent));width:0%;transition:width .6s;border-radius:1px;}
+  /* ── ANIMATIONS ── */
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(24px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  @keyframes scrollPulse {
+    0%, 100% { opacity: 0.4; transform: scaleY(1); }
+    50% { opacity: 1; transform: scaleY(1.15); }
+  }
+  .reveal {
+    opacity: 0; transform: translateY(32px);
+    transition: opacity 0.7s ease, transform 0.7s ease;
+  }
+  .reveal.visible { opacity: 1; transform: translateY(0); }
 
-/* ── Controls ── */
-.controls{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:10px;}
-.btn{
-  padding:14px;border:1px solid var(--border);border-radius:10px;
-  font-family:'Rajdhani',sans-serif;font-size:15px;font-weight:700;
-  letter-spacing:2px;text-transform:uppercase;cursor:pointer;transition:all .2s;
-  background:var(--panel);color:var(--muted);
-}
-.btn:hover:not(:disabled){border-color:var(--accent);color:var(--accent);}
-.btn-start{background:var(--accent);border-color:var(--accent);color:#000 !important;box-shadow:0 4px 20px rgba(245,166,35,.3);}
-.btn-start:hover:not(:disabled){box-shadow:0 4px 32px rgba(245,166,35,.5);transform:translateY(-1px);}
-.btn-stop{border-color:var(--red);color:var(--red) !important;}
-.btn-stop:hover:not(:disabled){background:rgba(242,43,69,.08);}
-.btn:disabled{opacity:.3;cursor:not-allowed;}
-
-/* ── Settings Panel ── */
-.panel-box{
-  background:var(--panel);border:1px solid var(--border);
-  border-radius:12px;padding:14px 16px;margin-bottom:10px;
-  box-shadow:var(--card-shadow);transition:background .4s,border-color .4s;
-}
-.set-row{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;}
-.set-row:last-child{margin-bottom:0;}
-.set-lbl{font-size:12px;color:var(--muted2);}
-.set-lbl small{color:var(--muted);font-size:10px;}
-.inp-wrap{display:flex;align-items:center;background:var(--input-bg);border:1px solid var(--border);border-radius:6px;overflow:hidden;}
-.inp-wrap input,.inp-wrap select{
-  background:transparent;border:none;outline:none;color:var(--text);
-  font-family:'Share Tech Mono',monospace;font-size:13px;padding:6px 10px;width:86px;
-}
-.inp-wrap select{width:136px;font-family:'Exo 2',sans-serif;font-size:12px;}
-.inp-wrap .u{padding:0 8px 0 0;color:var(--muted);font-size:10px;white-space:nowrap;}
-
-/* ── Voice Toggle ── */
-.voice-row{display:flex;align-items:center;justify-content:space-between;}
-.toggle{width:40px;height:22px;background:var(--border2);border-radius:11px;position:relative;cursor:pointer;transition:background .3s;flex-shrink:0;}
-.toggle.on{background:var(--accent);}
-.toggle::after{content:'';position:absolute;top:3px;left:3px;width:16px;height:16px;border-radius:50%;background:#fff;transition:left .3s;box-shadow:0 1px 4px rgba(0,0,0,.3);}
-.toggle.on::after{left:21px;}
-
-/* ── Log ── */
-.log-list{max-height:80px;overflow-y:auto;scrollbar-width:thin;scrollbar-color:var(--border) transparent;}
-.log-item{
-  font-family:'Share Tech Mono',monospace;font-size:10px;color:var(--muted);
-  padding:3px 0;border-bottom:1px solid var(--border);
-  display:flex;justify-content:space-between;gap:8px;
-}
-.log-item .t{color:var(--accent);opacity:.7;flex-shrink:0;}
-.log-item .e{color:var(--text2);opacity:.85;}
-
-/* ── Receipt ── */
-.receipt{
-  background:var(--panel);border:1px solid var(--accent);
-  border-radius:12px;padding:20px;margin-bottom:10px;display:none;
-  position:relative;box-shadow:var(--card-shadow);
-  transition:background .4s;
-}
-.receipt::before{content:'✓ TRIP COMPLETE';position:absolute;top:12px;right:14px;font-size:9px;letter-spacing:2px;color:var(--green);}
-.rec-title{font-family:'Rajdhani',sans-serif;font-size:22px;font-weight:700;color:var(--accent);margin-bottom:12px;}
-.rec-row{display:flex;justify-content:space-between;padding:5px 0;font-size:12px;border-bottom:1px dotted var(--border);}
-.rec-row:last-child{border:none;}
-.rec-row .k{color:var(--muted2);}
-.rec-row .v{font-family:'Share Tech Mono',monospace;color:var(--text);}
-.rec-total{margin-top:10px;padding-top:10px;border-top:1px solid var(--accent);display:flex;justify-content:space-between;font-family:'Rajdhani',sans-serif;font-size:26px;font-weight:700;color:var(--accent);}
-
-/* ── Toast ── */
-.toast{
-  position:fixed;bottom:20px;left:50%;
-  transform:translateX(-50%) translateY(80px);
-  background:var(--panel);border:1px solid var(--border);
-  border-radius:8px;padding:10px 18px;font-size:12px;letter-spacing:.5px;
-  transition:transform .3s cubic-bezier(.175,.885,.32,1.275);z-index:9999;
-  box-shadow:0 8px 30px rgba(0,0,0,.3);white-space:nowrap;color:var(--text);
-}
-.toast.show{transform:translateX(-50%) translateY(0);}
-.toast.ok{border-color:var(--green);color:var(--green);}
-.toast.err{border-color:var(--red);color:var(--red);}
-
-.footer{text-align:center;font-size:10px;color:var(--muted);letter-spacing:1px;padding-top:6px;}
-
-/* ── Leaflet popup theme ── */
-[data-theme="night"] .leaflet-popup-content-wrapper{background:#0d1117 !important;border:1px solid #243040 !important;color:#dce5f0 !important;}
-[data-theme="day"]   .leaflet-popup-content-wrapper{background:#ffffff !important;border:1px solid #c5d4e0 !important;color:#1a2535 !important;}
-.leaflet-popup-content-wrapper{border-radius:8px !important;font-family:'Share Tech Mono',monospace !important;font-size:11px !important;box-shadow:0 4px 20px rgba(0,0,0,.2) !important;}
-[data-theme="night"] .leaflet-popup-tip{background:#0d1117 !important;}
-[data-theme="day"]   .leaflet-popup-tip{background:#ffffff !important;}
-
-/* Scrollbar */
-::-webkit-scrollbar{width:4px;}
-::-webkit-scrollbar-track{background:transparent;}
-::-webkit-scrollbar-thumb{background:var(--border);border-radius:2px;}
+  /* ── RESPONSIVE ── */
+  @media (max-width: 900px) {
+    nav { padding: 16px 24px; }
+    .nav-links { display: none; }
+    .intro-grid { grid-template-columns: 1fr; gap: 48px; }
+    .story-timeline::before { display: none; }
+    .story-item { grid-template-columns: 1fr; gap: 16px; }
+    .story-center { flex-direction: row; gap: 12px; align-items: center; }
+    .story-dot { margin-top: 0; }
+    .story-content-empty { display: none; }
+    .story-content { padding: 0; }
+    .why-grid { grid-template-columns: 1fr; }
+    .process-steps { grid-template-columns: 1fr 1fr; gap: 40px; }
+    .process-steps::before { display: none; }
+    .footer-grid { grid-template-columns: 1fr 1fr; }
+    .footer-bottom { flex-direction: column; gap: 12px; text-align: center; }
+  }
+  @media (max-width: 600px) {
+    section { padding: 72px 20px; }
+    .intro-stats { grid-template-columns: 1fr; }
+    .process-steps { grid-template-columns: 1fr; }
+    .footer-grid { grid-template-columns: 1fr; }
+    .hero-actions { flex-direction: column; align-items: center; }
+  }
 </style>
 </head>
 <body>
-<div class="app">
 
-  <!-- Header with theme switch -->
-  <div class="header">
-    <div class="logo-badge">● TAXIMETER PRO</div>
-    <h1>TAXI<span>METER</span> PRO</h1>
-    <div class="tagline">GPS · Navigation · Voice · Worldwide</div>
-    <div class="theme-switch" onclick="toggleTheme()" title="Switch day/night">
-      <span class="icon" id="themeIcon">🌙</span>
-      <div class="theme-pill" id="themePill"></div>
-      <span class="lbl" id="themeLbl">NIGHT</span>
-    </div>
+<!-- Navigation -->
+<nav role="navigation" aria-label="Main navigation">
+  <a href="https://ceylon.food" class="nav-logo" aria-label="ceylon.food home">ceylon<span>.food</span></a>
+  <ul class="nav-links">
+    <li><a href="#story">Our Story</a></li>
+    <li><a href="#why">Why Ceylon</a></li>
+    <li><a href="#process">How It's Made</a></li>
+    <li><a href="#faq">FAQ</a></li>
+    <li><a href="#shop" class="nav-cta">Shop Now</a></li>
+  </ul>
+</nav>
+
+<!-- Hero -->
+<header class="hero" role="banner">
+  <div class="hero-pattern" aria-hidden="true"></div>
+  <div class="hero-ring" aria-hidden="true"></div>
+  <div class="hero-ring" aria-hidden="true"></div>
+  <div class="hero-ring" aria-hidden="true"></div>
+  <span class="hero-eyebrow">ceylon.food — since the beginning of time</span>
+  <h1>The World's Only <em>True</em> Cinnamon</h1>
+  <p class="hero-sub">Grown on the tropical island of Sri Lanka for over 2,000 years. Rarer, sweeter, and safer than anything sold in a supermarket.</p>
+  <div class="hero-actions">
+    <a href="#shop" class="btn-primary">Shop Ceylon Cinnamon</a>
+    <a href="#story" class="btn-secondary">Read Our Story</a>
   </div>
+  <div class="hero-scroll" aria-hidden="true">
+    <div class="scroll-line"></div>
+    <span>Scroll</span>
+  </div>
+</header>
 
-  <!-- Country / Currency Banner -->
-  <div class="country-banner">
-    <div class="country-left">
-      <div class="country-flag" id="cFlag">🌍</div>
+<!-- Intro / About -->
+<section class="intro-section" id="about" aria-labelledby="intro-heading">
+  <div class="container">
+    <div class="intro-grid">
       <div>
-        <div class="country-name" id="cName">Detecting location…</div>
-        <div class="country-sub" id="cSub">Tap detect to auto-set currency</div>
+        <span class="section-label reveal">True Cinnamon from Sri Lanka</span>
+        <h2 id="intro-heading" class="reveal">Not all cinnamon is <em>equal</em></h2>
+        <p class="reveal">Most cinnamon sold in supermarkets around the world is not real cinnamon. It is Cassia — a cheaper bark from China and Vietnam with a harsher taste and dangerously high levels of coumarin, a compound that can damage your liver with regular use.</p>
+        <p class="reveal">Ceylon cinnamon (<em>Cinnamomum verum</em>) — "true cinnamon" — grows only in Sri Lanka. It has a delicate, complex sweetness, paper-thin layers that crumble at a touch, and coumarin levels so low they are undetectable. It is the only cinnamon recommended for daily use by European food safety authorities.</p>
+        <div class="intro-stats">
+          <div class="stat-card reveal">
+            <div class="stat-number">2,000+</div>
+            <div class="stat-label">Years of cinnamon cultivation in Sri Lanka</div>
+          </div>
+          <div class="stat-card reveal">
+            <div class="stat-number">80%</div>
+            <div class="stat-label">Of the world's true cinnamon comes from Sri Lanka</div>
+          </div>
+          <div class="stat-card reveal">
+            <div class="stat-number">1200×</div>
+            <div class="stat-label">Less coumarin than Cassia cinnamon</div>
+          </div>
+          <div class="stat-card reveal">
+            <div class="stat-number">100%</div>
+            <div class="stat-label">Direct from Ceylon — no middlemen</div>
+          </div>
+        </div>
+      </div>
+      <div class="intro-visual reveal">
+        <div class="intro-img-frame">
+          <svg class="cinnamon-illustration" viewBox="0 0 400 500" xmlns="http://www.w3.org/2000/svg" aria-label="Illustration of Ceylon cinnamon quills">
+            <!-- Background warm wash -->
+            <rect width="400" height="500" fill="#F5EAD8"/>
+            <!-- Cinnamon quills illustration -->
+            <g transform="translate(200,250)">
+              <!-- Main large quill -->
+              <ellipse cx="0" cy="0" rx="30" ry="120" fill="#C0672A" opacity="0.9" transform="rotate(-15)"/>
+              <ellipse cx="0" cy="0" rx="22" ry="110" fill="#8B4513" opacity="0.7" transform="rotate(-15)"/>
+              <ellipse cx="0" cy="0" rx="14" ry="100" fill="#5C3317" opacity="0.5" transform="rotate(-15)"/>
+              <!-- Second quill -->
+              <ellipse cx="55" cy="-20" rx="25" ry="110" fill="#C0672A" opacity="0.8" transform="rotate(8)"/>
+              <ellipse cx="55" cy="-20" rx="17" ry="100" fill="#8B4513" opacity="0.6" transform="rotate(8)"/>
+              <!-- Third quill -->
+              <ellipse cx="-55" cy="10" rx="22" ry="105" fill="#C0672A" opacity="0.75" transform="rotate(-22)"/>
+              <ellipse cx="-55" cy="10" rx="14" ry="95" fill="#8B4513" opacity="0.55" transform="rotate(-22)"/>
+              <!-- Small star anise accent -->
+              <g transform="translate(80, 90) scale(0.7)">
+                <path d="M0,-30 L5,-8 L28,-8 L10,5 L18,28 L0,15 L-18,28 L-10,5 L-28,-8 L-5,-8 Z" fill="#B8860B" opacity="0.6"/>
+                <circle cx="0" cy="0" r="6" fill="#D4A843" opacity="0.8"/>
+              </g>
+              <!-- Small leaves -->
+              <ellipse cx="-80" cy="-70" rx="12" ry="22" fill="#4A7C3F" opacity="0.5" transform="rotate(30,-80,-70)"/>
+              <ellipse cx="75" cy="-80" rx="10" ry="18" fill="#4A7C3F" opacity="0.45" transform="rotate(-20,75,-80)"/>
+              <!-- Texture lines on main quill -->
+              <line x1="-8" y1="-100" x2="8" y2="-100" stroke="#FAF6F0" stroke-width="1" opacity="0.4" transform="rotate(-15) translate(0,0)"/>
+              <line x1="-12" y1="-70" x2="12" y2="-70" stroke="#FAF6F0" stroke-width="1" opacity="0.35" transform="rotate(-15)"/>
+              <line x1="-14" y1="-40" x2="14" y2="-40" stroke="#FAF6F0" stroke-width="1" opacity="0.3" transform="rotate(-15)"/>
+            </g>
+            <!-- Label at bottom -->
+            <text x="200" y="460" text-anchor="middle" font-family="Georgia, serif" font-style="italic" font-size="15" fill="#8B4513" opacity="0.7">Cinnamomum verum</text>
+            <text x="200" y="480" text-anchor="middle" font-family="Georgia, serif" font-size="12" fill="#8B4513" opacity="0.5" letter-spacing="2">TRUE CEYLON CINNAMON</text>
+          </svg>
+        </div>
       </div>
     </div>
-    <div style="display:flex;align-items:center;gap:8px;">
-      <div class="currency-chip" id="cChip">$</div>
-      <button class="detect-btn" onclick="detectCountry()">📡 DETECT</button>
+  </div>
+</section>
+
+<!-- Story / History Timeline -->
+<section class="story-section" id="story" aria-labelledby="story-heading">
+  <div class="container">
+    <div style="text-align:center; margin-bottom:64px;">
+      <span class="section-label reveal">History</span>
+      <h2 id="story-heading" class="reveal">Two thousand years of <em>stories</em></h2>
+      <p style="max-width:560px; margin:0 auto; color:var(--text-muted);" class="reveal">Ceylon cinnamon has been traded, sought after, and treasured by every great civilisation on earth. This is its story.</p>
+    </div>
+    <div class="story-timeline" role="list">
+
+      <div class="story-item" role="listitem">
+        <div class="story-content-empty"></div>
+        <div class="story-center">
+          <div class="story-year">300 BC</div>
+          <div class="story-dot"></div>
+        </div>
+        <div class="story-content">
+          <div class="story-content-card reveal">
+            <h3>The Ancient Spice Routes</h3>
+            <p>Greek and Roman writers described Ceylon cinnamon as a gift from the gods — so precious it was offered only to royalty and burned in sacred temples. Arab merchants controlled the supply and kept its origin secret for centuries, calling it "cinnamon from the land at the edge of the world."</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="story-item" role="listitem">
+        <div class="story-content">
+          <div class="story-content-card reveal">
+            <h3>The Portuguese Discovery</h3>
+            <p>In 1505, Portuguese explorer Lourenço de Almeida landed on the island of Ceylon (now Sri Lanka) and discovered vast forests of cinnamon trees. The Portuguese established the first European trading posts and began exporting Ceylon cinnamon to Europe — triggering the age of spice trade that changed the world forever.</p>
+          </div>
+        </div>
+        <div class="story-center">
+          <div class="story-year">1505</div>
+          <div class="story-dot"></div>
+        </div>
+        <div class="story-content-empty"></div>
+      </div>
+
+      <div class="story-item" role="listitem">
+        <div class="story-content-empty"></div>
+        <div class="story-center">
+          <div class="story-year">1658</div>
+          <div class="story-dot"></div>
+        </div>
+        <div class="story-content">
+          <div class="story-content-card reveal">
+            <h3>The Dutch Monopoly</h3>
+            <p>The Dutch East India Company seized control of Ceylon and established the world's first cinnamon plantation. They so jealously guarded their monopoly that burning cinnamon was punishable by death in Amsterdam. A pound of Ceylon cinnamon was worth more than a working man's annual wage in Europe.</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="story-item" role="listitem">
+        <div class="story-content">
+          <div class="story-content-card reveal">
+            <h3>Ceylon Returns to Its People</h3>
+            <p>Following independence in 1948, Sri Lankan farmers reclaimed their ancestral knowledge of cinnamon cultivation — passed down through generations of skilled peelers known as <em>chalias</em>. Today, small family farms in the Galle, Matara, and Kalutara districts continue to peel cinnamon by hand, exactly as their ancestors did.</p>
+          </div>
+        </div>
+        <div class="story-center">
+          <div class="story-year">1948</div>
+          <div class="story-dot"></div>
+        </div>
+        <div class="story-content-empty"></div>
+      </div>
+
+      <div class="story-item" role="listitem">
+        <div class="story-content-empty"></div>
+        <div class="story-center">
+          <div class="story-year">Today</div>
+          <div class="story-dot"></div>
+        </div>
+        <div class="story-content">
+          <div class="story-content-card reveal">
+            <h3>Direct to Your Table</h3>
+            <p>At ceylon.food, we source directly from family farms in southern Sri Lanka — cutting out every middleman so that more money reaches the farmers and you receive fresher, purer cinnamon than any supermarket can offer. The 2,000-year story of Ceylon cinnamon continues in every quill we send you.</p>
+          </div>
+        </div>
+      </div>
+
     </div>
   </div>
+</section>
 
-  <!-- Nav instruction banner -->
-  <div class="nav-banner" id="navBanner">
-    <div class="nav-arrow" id="navArrow">⬆</div>
-    <div>
-      <div class="nav-instruction" id="navInstruction">Head north</div>
-      <div class="nav-dist" id="navDist">—</div>
-      <div class="nav-street" id="navStreet">—</div>
-    </div>
-  </div>
-
-  <!-- Destination search -->
-  <div class="dest-box">
-    <div class="panel-title">Set Destination</div>
-    <div class="search-row">
-      <input class="search-input" id="destInput" placeholder="Search city, street, place…" autocomplete="off" onkeydown="if(event.key==='Enter')searchDest()">
-      <button class="btn-search" onclick="searchDest()">SEARCH</button>
-    </div>
-    <div class="search-hint">or <span onclick="enableMapClick()">tap on map</span> to pin destination</div>
-    <div class="suggestions" id="suggestions"></div>
-    <div class="route-info" id="routeInfo">
-      <div class="ri-item" style="text-align:center"><div class="ri-val" id="riDist">—</div><div class="ri-lbl">km</div></div>
-      <div class="ri-item" style="text-align:center"><div class="ri-val" id="riTime">—</div><div class="ri-lbl">Est. time</div></div>
-      <div class="ri-item" style="text-align:center"><div class="ri-val" id="riTurns">—</div><div class="ri-lbl">Turns</div></div>
-      <button class="btn-clear-route" onclick="clearRoute()">CLEAR</button>
-    </div>
-  </div>
-
-  <!-- Status -->
-  <div class="status-bar">
-    <div class="status-left">
-      <div class="dot" id="gpsDot"></div>
-      <span id="gpsLabel" style="color:var(--muted)">GPS NOT READY</span>
-    </div>
-    <div class="acc-badge" id="accBadge">NO FIX</div>
-  </div>
-
-  <!-- Map -->
-  <div class="map-wrapper">
-    <div id="map"></div>
-    <div class="map-tl">LAT <span id="latVal">—</span> &nbsp;LON <span id="lonVal">—</span></div>
-    <div class="map-tr">
-      <div class="map-btn" title="Center" onclick="centerMap()">◎</div>
-      <div class="map-btn" title="Clear path" onclick="clearTripPath()">✕</div>
-    </div>
-    <div class="map-hint" id="mapHint">Tap map to set destination</div>
-  </div>
-
-  <!-- Fare -->
-  <div class="fare-card" id="fareCard">
-    <div class="fare-lbl">CURRENT FARE</div>
-    <div class="fare-row">
-      <span class="fare-sym" id="fareSym">$</span>
-      <span class="fare-num" id="fareNum">0.00</span>
-    </div>
-    <div class="dist-bar"><div class="dist-fill" id="distFill"></div></div>
-    <div class="stats-row">
-      <div class="stat"><div class="v" id="stDist">0.00</div><div class="l">km</div></div>
-      <div class="stat"><div class="v" id="stTime">00:00</div><div class="l">time</div></div>
-      <div class="stat"><div class="v" id="stSpeed">0</div><div class="l">km/h</div></div>
-      <div class="stat"><div class="v" id="stWait">0:00</div><div class="l">wait</div></div>
-    </div>
-  </div>
-
-  <!-- Controls -->
-  <div class="controls">
-    <button class="btn btn-start" id="btnStart" onclick="startRide()">▶ START</button>
-    <button class="btn btn-stop"  id="btnStop"  onclick="stopRide()" disabled>■ END RIDE</button>
-  </div>
-
-  <!-- Settings -->
-  <div class="panel-box">
-    <div class="panel-title">Fare Settings</div>
-    <div class="set-row">
-      <div class="set-lbl">Currency</div>
-      <div class="inp-wrap">
-        <select id="selCurrency" onchange="onCurrencyChange()">
-          <option value="USD|$|US">🇺🇸 USD — US Dollar ($)</option>
-          <option value="EUR|€|EU">🇪🇺 EUR — Euro (€)</option>
-          <option value="GBP|£|GB">🇬🇧 GBP — Pound (£)</option>
-          <option value="AED|د.إ|AE">🇦🇪 AED — Dirham</option>
-          <option value="SAR|﷼|SA">🇸🇦 SAR — Riyal</option>
-          <option value="EGP|E£|EG">🇪🇬 EGP — Egyptian Pound</option>
-          <option value="MAD|د.م|MA">🇲🇦 MAD — Moroccan Dirham</option>
-          <option value="DZD|دج|DZ">🇩🇿 DZD — Algerian Dinar</option>
-          <option value="TND|د.ت|TN">🇹🇳 TND — Tunisian Dinar</option>
-          <option value="LYD|ل.د|LY">🇱🇾 LYD — Libyan Dinar</option>
-          <option value="TRY|₺|TR">🇹🇷 TRY — Turkish Lira (₺)</option>
-          <option value="INR|₹|IN">🇮🇳 INR — Indian Rupee (₹)</option>
-          <option value="PKR|₨|PK">🇵🇰 PKR — Pakistani Rupee</option>
-          <option value="BDT|৳|BD">🇧🇩 BDT — Bangladeshi Taka</option>
-          <option value="LKR|₨|LK">🇱🇰 LKR — Sri Lankan Rupee</option>
-          <option value="NPR|₨|NP">🇳🇵 NPR — Nepalese Rupee</option>
-          <option value="NGN|₦|NG">🇳🇬 NGN — Nigerian Naira (₦)</option>
-          <option value="KES|KSh|KE">🇰🇪 KES — Kenyan Shilling</option>
-          <option value="GHS|₵|GH">🇬🇭 GHS — Ghanaian Cedi (₵)</option>
-          <option value="ZAR|R|ZA">🇿🇦 ZAR — South African Rand (R)</option>
-          <option value="ETB|Br|ET">🇪🇹 ETB — Ethiopian Birr</option>
-          <option value="TZS|TSh|TZ">🇹🇿 TZS — Tanzanian Shilling</option>
-          <option value="UGX|USh|UG">🇺🇬 UGX — Ugandan Shilling</option>
-          <option value="XOF|CFA|SN">🇸🇳 XOF — West African CFA</option>
-          <option value="BRL|R$|BR">🇧🇷 BRL — Brazilian Real</option>
-          <option value="MXN|$|MX">🇲🇽 MXN — Mexican Peso ($)</option>
-          <option value="COP|$|CO">🇨🇴 COP — Colombian Peso</option>
-          <option value="ARS|$|AR">🇦🇷 ARS — Argentine Peso</option>
-          <option value="JPY|¥|JP">🇯🇵 JPY — Japanese Yen (¥)</option>
-          <option value="CNY|¥|CN">🇨🇳 CNY — Chinese Yuan (¥)</option>
-          <option value="KRW|₩|KR">🇰🇷 KRW — South Korean Won (₩)</option>
-          <option value="IDR|Rp|ID">🇮🇩 IDR — Indonesian Rupiah</option>
-          <option value="PHP|₱|PH">🇵🇭 PHP — Philippine Peso (₱)</option>
-          <option value="THB|฿|TH">🇹🇭 THB — Thai Baht (฿)</option>
-          <option value="MYR|RM|MY">🇲🇾 MYR — Malaysian Ringgit</option>
-          <option value="SGD|S$|SG">🇸🇬 SGD — Singapore Dollar</option>
-          <option value="VND|₫|VN">🇻🇳 VND — Vietnamese Dong (₫)</option>
-          <option value="IQD|ع.د|IQ">🇮🇶 IQD — Iraqi Dinar</option>
-          <option value="IRR|﷼|IR">🇮🇷 IRR — Iranian Rial</option>
-          <option value="JOD|د.ا|JO">🇯🇴 JOD — Jordanian Dinar</option>
-          <option value="KWD|د.ك|KW">🇰🇼 KWD — Kuwaiti Dinar</option>
-          <option value="QAR|﷼|QA">🇶🇦 QAR — Qatari Riyal</option>
-          <option value="OMR|﷼|OM">🇴🇲 OMR — Omani Rial</option>
-          <option value="BHD|BD|BH">🇧🇭 BHD — Bahraini Dinar</option>
-          <option value="RUB|₽|RU">🇷🇺 RUB — Russian Ruble (₽)</option>
-          <option value="UAH|₴|UA">🇺🇦 UAH — Ukrainian Hryvnia (₴)</option>
-          <option value="PLN|zł|PL">🇵🇱 PLN — Polish Zloty</option>
-          <option value="CZK|Kč|CZ">🇨🇿 CZK — Czech Koruna</option>
-          <option value="HUF|Ft|HU">🇭🇺 HUF — Hungarian Forint</option>
-          <option value="RON|lei|RO">🇷🇴 RON — Romanian Leu</option>
-          <option value="CAD|C$|CA">🇨🇦 CAD — Canadian Dollar</option>
-          <option value="AUD|A$|AU">🇦🇺 AUD — Australian Dollar</option>
-          <option value="NZD|NZ$|NZ">🇳🇿 NZD — New Zealand Dollar</option>
-          <option value="CHF|Fr|CH">🇨🇭 CHF — Swiss Franc</option>
-          <option value="SEK|kr|SE">🇸🇪 SEK — Swedish Krona</option>
-          <option value="NOK|kr|NO">🇳🇴 NOK — Norwegian Krone</option>
-          <option value="DKK|kr|DK">🇩🇰 DKK — Danish Krone</option>
-        </select>
+<!-- Why Ceylon -->
+<section class="why-section" id="why" aria-labelledby="why-heading">
+  <div class="container">
+    <span class="section-label reveal">Why it matters</span>
+    <h2 id="why-heading" class="reveal">Six reasons Ceylon cinnamon<br>is <em>unlike</em> anything else</h2>
+    <div class="why-grid">
+      <div class="why-card reveal">
+        <span class="why-icon" aria-hidden="true" style="font-size:28px; color:#C0672A;">❧</span>
+        <h3>Ultra-low coumarin</h3>
+        <p>Ceylon cinnamon contains 1,200 times less coumarin than Cassia. The European Food Safety Authority specifically recommends Ceylon cinnamon for people who use cinnamon daily for health.</p>
+      </div>
+      <div class="why-card reveal">
+        <span class="why-icon" aria-hidden="true" style="font-size:28px; color:#C0672A;">❧</span>
+        <h3>Complex, delicate flavour</h3>
+        <p>Where Cassia is harsh and peppery, Ceylon cinnamon is light, sweet, and floral — with faint citrus notes. Chefs and bakers who have tried it never return to supermarket cinnamon.</p>
+      </div>
+      <div class="why-card why-highlight reveal">
+        <span class="why-icon" aria-hidden="true" style="font-size:28px; color:rgba(255,253,249,0.8);">❧</span>
+        <h3>Hand-peeled by skilled artisans</h3>
+        <p>Each quill is hand-peeled by chalias — master craftspeople who have spent their lives perfecting the technique of stripping, drying, and rolling cinnamon bark. This cannot be replicated by machines.</p>
+      </div>
+      <div class="why-card reveal">
+        <span class="why-icon" aria-hidden="true" style="font-size:28px; color:#C0672A;">❧</span>
+        <h3>Blood sugar support</h3>
+        <p>Multiple clinical studies show Ceylon cinnamon supports healthy blood sugar levels. Unlike Cassia, its low coumarin means you can safely take therapeutic amounts every day without risk to your liver.</p>
+      </div>
+      <div class="why-card reveal">
+        <span class="why-icon" aria-hidden="true" style="font-size:28px; color:#C0672A;">❧</span>
+        <h3>Direct from source</h3>
+        <p>We source directly from farmers in Galle and Matara — the heartland of Ceylon cinnamon. No warehouses, no brokers, no supermarket distribution. Fresh to your door from the farm.</p>
+      </div>
+      <div class="why-card reveal">
+        <span class="why-icon" aria-hidden="true" style="font-size:28px; color:#C0672A;">❧</span>
+        <h3>Geographically protected</h3>
+        <p>Ceylon cinnamon carries EU Geographical Indication status — like Champagne or Parma Ham. Only cinnamon grown in Sri Lanka can legally carry the name. Every order from ceylon.food is the real thing.</p>
       </div>
     </div>
-    <div class="set-row">
-      <div class="set-lbl">Base Fare</div>
-      <div class="inp-wrap"><input type="number" id="inBase" value="2.50" step="0.10" min="0"><span class="u" id="u1">$</span></div>
+  </div>
+</section>
+
+<!-- Process -->
+<section class="process-section" id="process" aria-labelledby="process-heading">
+  <div class="container">
+    <div style="text-align:center;">
+      <span class="section-label reveal">Craftsmanship</span>
+      <h2 id="process-heading" class="reveal">From tree to <em>table</em></h2>
+      <p style="max-width:500px; margin:0 auto; color:var(--text-muted);" class="reveal">Every step of making Ceylon cinnamon is done by hand. No shortcuts. No machines. Just 2,000 years of knowledge.</p>
     </div>
-    <div class="set-row">
-      <div class="set-lbl">Per KM</div>
-      <div class="inp-wrap"><input type="number" id="inKm" value="1.20" step="0.05" min="0"><span class="u" id="u2">$/km</span></div>
-    </div>
-    <div class="set-row">
-      <div class="set-lbl">Waiting <small>per min</small></div>
-      <div class="inp-wrap"><input type="number" id="inWait" value="0.30" step="0.05" min="0"><span class="u" id="u3">$/min</span></div>
-    </div>
-    <div class="set-row">
-      <div class="set-lbl">Wait Threshold <small>km/h</small></div>
-      <div class="inp-wrap"><input type="number" id="inThresh" value="5" step="1" min="1" max="30"><span class="u">km/h</span></div>
-    </div>
-    <div class="set-row voice-row">
-      <div class="set-lbl">🔊 Voice Navigation</div>
-      <div class="toggle on" id="voiceToggle" onclick="toggleVoice()"></div>
+    <div class="process-steps" role="list">
+      <div class="process-step reveal" role="listitem">
+        <div class="step-circle" aria-hidden="true">1</div>
+        <h3>Harvest</h3>
+        <p>Young cinnamon shoots are harvested by hand during the rainy season when the bark is most supple and aromatic.</p>
+      </div>
+      <div class="process-step reveal" role="listitem">
+        <div class="step-circle" aria-hidden="true">2</div>
+        <h3>Peel</h3>
+        <p>Skilled chalias use a special curved knife to separate the outer bark from the inner layer — leaving only the paper-thin cinnamon underneath.</p>
+      </div>
+      <div class="process-step reveal" role="listitem">
+        <div class="step-circle" aria-hidden="true">3</div>
+        <h3>Roll</h3>
+        <p>The thin strips are rolled together into the signature quill shape and left to dry naturally in the shade for several days.</p>
+      </div>
+      <div class="process-step reveal" role="listitem">
+        <div class="step-circle" aria-hidden="true">4</div>
+        <h3>Grade & Ship</h3>
+        <p>Each quill is graded by hand for quality. Only the finest grades leave Sri Lanka — packed and shipped directly to your door.</p>
+      </div>
     </div>
   </div>
+</section>
 
-  <!-- Log -->
-  <div class="panel-box">
-    <div class="panel-title">Trip Log</div>
-    <div class="log-list" id="logList">
-      <div class="log-item"><span class="t">--:--:--</span><span class="e">Waiting to start…</span></div>
+<!-- FAQ -->
+<section class="faq-section" id="faq" aria-labelledby="faq-heading">
+  <div class="container-narrow">
+    <span class="section-label reveal">Common questions</span>
+    <h2 id="faq-heading" class="reveal">Everything you want to <em>know</em></h2>
+    <div class="faq-list" role="list">
+
+      <div class="faq-item reveal" role="listitem" onclick="toggleFaq(this)">
+        <div class="faq-question">
+          <span class="faq-q-text">What is Ceylon cinnamon and how is it different?</span>
+          <div class="faq-toggle" aria-hidden="true">+</div>
+        </div>
+        <div class="faq-answer">Ceylon cinnamon (<em>Cinnamomum verum</em>) is the only true cinnamon in the world, grown exclusively in Sri Lanka. Most "cinnamon" sold in supermarkets is actually Cassia — a related but different plant from China or Vietnam. Ceylon cinnamon has a lighter, more complex flavour and contains up to 1,200 times less coumarin, a compound that can damage the liver at high doses. Ceylon is the only variety safe for daily therapeutic use.</div>
+      </div>
+
+      <div class="faq-item reveal" role="listitem" onclick="toggleFaq(this)">
+        <div class="faq-question">
+          <span class="faq-q-text">Why does Ceylon cinnamon look different from supermarket cinnamon?</span>
+          <div class="faq-toggle" aria-hidden="true">+</div>
+        </div>
+        <div class="faq-answer">Ceylon cinnamon quills are made up of many paper-thin layers rolled together — like a cigar. If you snap one open, you will see multiple delicate layers. Cassia cinnamon (supermarket cinnamon) is thick, hard, and has only one or two layers — it is difficult to break and has a rough, hollow interior. The colour of Ceylon cinnamon is also a lighter tan-brown, not the deep reddish-brown of Cassia.</div>
+      </div>
+
+      <div class="faq-item reveal" role="listitem" onclick="toggleFaq(this)">
+        <div class="faq-question">
+          <span class="faq-q-text">Is Ceylon cinnamon good for blood sugar?</span>
+          <div class="faq-toggle" aria-hidden="true">+</div>
+        </div>
+        <div class="faq-answer">Yes. Multiple clinical studies have found that Ceylon cinnamon can help support healthy blood sugar levels by improving insulin sensitivity. Because of its extremely low coumarin content, Ceylon cinnamon is the only type safe to consume daily in meaningful amounts for health benefits. Cassia cinnamon contains too much coumarin to safely use therapeutically over the long term. Always speak to your doctor before using cinnamon medicinally.</div>
+      </div>
+
+      <div class="faq-item reveal" role="listitem" onclick="toggleFaq(this)">
+        <div class="faq-question">
+          <span class="faq-q-text">Where does your cinnamon come from?</span>
+          <div class="faq-toggle" aria-hidden="true">+</div>
+        </div>
+        <div class="faq-answer">All our cinnamon is sourced directly from small family farms in the Galle, Matara, and Kalutara districts of southern Sri Lanka — the traditional heartland of Ceylon cinnamon cultivation. We work directly with farmers, cutting out all middlemen. This means fresher cinnamon for you and fairer prices for the people who grow it.</div>
+      </div>
+
+      <div class="faq-item reveal" role="listitem" onclick="toggleFaq(this)">
+        <div class="faq-question">
+          <span class="faq-q-text">Do you ship internationally?</span>
+          <div class="faq-toggle" aria-hidden="true">+</div>
+        </div>
+        <div class="faq-answer">Yes — we ship to the USA, United Kingdom, Australia, Canada, Europe, and the UAE using DHL Express and Sri Lanka Post EMS. Most international orders arrive within 7–14 business days. We offer free shipping on orders above $35. All orders are carefully packed to protect the cinnamon during transit.</div>
+      </div>
+
+      <div class="faq-item reveal" role="listitem" onclick="toggleFaq(this)">
+        <div class="faq-question">
+          <span class="faq-q-text">How should I store Ceylon cinnamon?</span>
+          <div class="faq-toggle" aria-hidden="true">+</div>
+        </div>
+        <div class="faq-answer">Store cinnamon sticks and powder in an airtight container in a cool, dark place away from direct sunlight. Properly stored, cinnamon sticks last up to 3–4 years and ground cinnamon up to 2 years. The quills can be ground fresh at home in a spice grinder or mortar and pestle for the most intense flavour.</div>
+      </div>
+
     </div>
   </div>
+</section>
 
-  <!-- Receipt -->
-  <div class="receipt" id="receipt">
-    <div class="rec-title">TRIP RECEIPT</div>
-    <div class="rec-row"><span class="k">Date / Time</span><span class="v" id="rDate">—</span></div>
-    <div class="rec-row"><span class="k">Distance</span><span class="v" id="rDist">—</span></div>
-    <div class="rec-row"><span class="k">Duration</span><span class="v" id="rDur">—</span></div>
-    <div class="rec-row"><span class="k">Base Fare</span><span class="v" id="rBase">—</span></div>
-    <div class="rec-row"><span class="k">Distance Charge</span><span class="v" id="rDistC">—</span></div>
-    <div class="rec-row"><span class="k">Waiting Charge</span><span class="v" id="rWaitC">—</span></div>
-    <div class="rec-total"><span>TOTAL</span><span id="rTotal">—</span></div>
+<!-- CTA -->
+<section class="cta-section" id="shop" aria-labelledby="cta-heading">
+  <span class="section-label">ceylon.food</span>
+  <h2 id="cta-heading">Taste the <em>real</em> cinnamon</h2>
+  <p>Direct from Sri Lankan farms to your door. Premium Ceylon cinnamon sticks, powder, and spice collections — shipped worldwide.</p>
+  <div>
+    <a href="https://ceylon.food/shop" class="btn-white">Shop Cinnamon</a>
+    <a href="https://ceylon.food/shop" class="btn-outline-white">View Gift Sets</a>
   </div>
+</section>
 
-  <div class="footer">TAXIMETER PRO · OpenStreetMap © Contributors · OSRM Routing · Free Forever</div>
-</div>
-<div class="toast" id="toast"></div>
+<!-- Footer -->
+<footer role="contentinfo">
+  <div class="footer-grid">
+    <div class="footer-brand">
+      <a href="https://ceylon.food" class="nav-logo">ceylon<span style="color:var(--cinnamon-light)">.food</span></a>
+      <p>Premium Ceylon cinnamon and spices sourced directly from family farms in Sri Lanka. The only true cinnamon — shipped worldwide.</p>
+    </div>
+    <div class="footer-col">
+      <h4>Shop</h4>
+      <ul>
+        <li><a href="#">Cinnamon Sticks</a></li>
+        <li><a href="#">Ground Cinnamon</a></li>
+        <li><a href="#">Spice Gift Sets</a></li>
+        <li><a href="#">Cinnamon Oil</a></li>
+        <li><a href="#">Wholesale</a></li>
+      </ul>
+    </div>
+    <div class="footer-col">
+      <h4>Learn</h4>
+      <ul>
+        <li><a href="#">Ceylon vs Cassia</a></li>
+        <li><a href="#">Health Benefits</a></li>
+        <li><a href="#">How It's Made</a></li>
+        <li><a href="#">Recipes</a></li>
+        <li><a href="#">Blog</a></li>
+      </ul>
+    </div>
+    <div class="footer-col">
+      <h4>Contact</h4>
+      <ul>
+        <li><a href="#">About Us</a></li>
+        <li><a href="#">Shipping Info</a></li>
+        <li><a href="#">Returns</a></li>
+        <li><a href="mailto:hello@ceylon.food">hello@ceylon.food</a></li>
+      </ul>
+    </div>
+  </div>
+  <div class="footer-bottom">
+    <span>© 2025 ceylon.food — All rights reserved</span>
+    <span>True Ceylon Cinnamon · Direct from Sri Lanka · Shipped Worldwide</span>
+  </div>
+</footer>
 
-<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 <script>
-// ══════════════════════════════════════════
-//  COUNTRY → CURRENCY MAP (60+ countries)
-// ══════════════════════════════════════════
-const COUNTRY_DATA = {
-  US:{name:'United States',flag:'🇺🇸',currency:'USD|$|US'},
-  GB:{name:'United Kingdom',flag:'🇬🇧',currency:'GBP|£|GB'},
-  DE:{name:'Germany',flag:'🇩🇪',currency:'EUR|€|EU'},
-  FR:{name:'France',flag:'🇫🇷',currency:'EUR|€|EU'},
-  IT:{name:'Italy',flag:'🇮🇹',currency:'EUR|€|EU'},
-  ES:{name:'Spain',flag:'🇪🇸',currency:'EUR|€|EU'},
-  NL:{name:'Netherlands',flag:'🇳🇱',currency:'EUR|€|EU'},
-  BE:{name:'Belgium',flag:'🇧🇪',currency:'EUR|€|EU'},
-  PT:{name:'Portugal',flag:'🇵🇹',currency:'EUR|€|EU'},
-  GR:{name:'Greece',flag:'🇬🇷',currency:'EUR|€|EU'},
-  AT:{name:'Austria',flag:'🇦🇹',currency:'EUR|€|EU'},
-  IE:{name:'Ireland',flag:'🇮🇪',currency:'EUR|€|EU'},
-  FI:{name:'Finland',flag:'🇫🇮',currency:'EUR|€|EU'},
-  AE:{name:'UAE',flag:'🇦🇪',currency:'AED|د.إ|AE'},
-  SA:{name:'Saudi Arabia',flag:'🇸🇦',currency:'SAR|﷼|SA'},
-  EG:{name:'Egypt',flag:'🇪🇬',currency:'EGP|E£|EG'},
-  MA:{name:'Morocco',flag:'🇲🇦',currency:'MAD|د.م|MA'},
-  DZ:{name:'Algeria',flag:'🇩🇿',currency:'DZD|دج|DZ'},
-  TN:{name:'Tunisia',flag:'🇹🇳',currency:'TND|د.ت|TN'},
-  LY:{name:'Libya',flag:'🇱🇾',currency:'LYD|ل.د|LY'},
-  TR:{name:'Turkey',flag:'🇹🇷',currency:'TRY|₺|TR'},
-  IN:{name:'India',flag:'🇮🇳',currency:'INR|₹|IN'},
-  PK:{name:'Pakistan',flag:'🇵🇰',currency:'PKR|₨|PK'},
-  BD:{name:'Bangladesh',flag:'🇧🇩',currency:'BDT|৳|BD'},
-  LK:{name:'Sri Lanka',flag:'🇱🇰',currency:'LKR|₨|LK'},
-  NP:{name:'Nepal',flag:'🇳🇵',currency:'NPR|₨|NP'},
-  NG:{name:'Nigeria',flag:'🇳🇬',currency:'NGN|₦|NG'},
-  KE:{name:'Kenya',flag:'🇰🇪',currency:'KES|KSh|KE'},
-  GH:{name:'Ghana',flag:'🇬🇭',currency:'GHS|₵|GH'},
-  ZA:{name:'South Africa',flag:'🇿🇦',currency:'ZAR|R|ZA'},
-  ET:{name:'Ethiopia',flag:'🇪🇹',currency:'ETB|Br|ET'},
-  TZ:{name:'Tanzania',flag:'🇹🇿',currency:'TZS|TSh|TZ'},
-  UG:{name:'Uganda',flag:'🇺🇬',currency:'UGX|USh|UG'},
-  SN:{name:'Senegal',flag:'🇸🇳',currency:'XOF|CFA|SN'},
-  BR:{name:'Brazil',flag:'🇧🇷',currency:'BRL|R$|BR'},
-  MX:{name:'Mexico',flag:'🇲🇽',currency:'MXN|$|MX'},
-  CO:{name:'Colombia',flag:'🇨🇴',currency:'COP|$|CO'},
-  AR:{name:'Argentina',flag:'🇦🇷',currency:'ARS|$|AR'},
-  JP:{name:'Japan',flag:'🇯🇵',currency:'JPY|¥|JP'},
-  CN:{name:'China',flag:'🇨🇳',currency:'CNY|¥|CN'},
-  KR:{name:'South Korea',flag:'🇰🇷',currency:'KRW|₩|KR'},
-  ID:{name:'Indonesia',flag:'🇮🇩',currency:'IDR|Rp|ID'},
-  PH:{name:'Philippines',flag:'🇵🇭',currency:'PHP|₱|PH'},
-  TH:{name:'Thailand',flag:'🇹🇭',currency:'THB|฿|TH'},
-  MY:{name:'Malaysia',flag:'🇲🇾',currency:'MYR|RM|MY'},
-  SG:{name:'Singapore',flag:'🇸🇬',currency:'SGD|S$|SG'},
-  VN:{name:'Vietnam',flag:'🇻🇳',currency:'VND|₫|VN'},
-  IQ:{name:'Iraq',flag:'🇮🇶',currency:'IQD|ع.د|IQ'},
-  IR:{name:'Iran',flag:'🇮🇷',currency:'IRR|﷼|IR'},
-  JO:{name:'Jordan',flag:'🇯🇴',currency:'JOD|د.ا|JO'},
-  KW:{name:'Kuwait',flag:'🇰🇼',currency:'KWD|د.ك|KW'},
-  QA:{name:'Qatar',flag:'🇶🇦',currency:'QAR|﷼|QA'},
-  OM:{name:'Oman',flag:'🇴🇲',currency:'OMR|﷼|OM'},
-  BH:{name:'Bahrain',flag:'🇧🇭',currency:'BHD|BD|BH'},
-  RU:{name:'Russia',flag:'🇷🇺',currency:'RUB|₽|RU'},
-  UA:{name:'Ukraine',flag:'🇺🇦',currency:'UAH|₴|UA'},
-  PL:{name:'Poland',flag:'🇵🇱',currency:'PLN|zł|PL'},
-  CZ:{name:'Czech Republic',flag:'🇨🇿',currency:'CZK|Kč|CZ'},
-  HU:{name:'Hungary',flag:'🇭🇺',currency:'HUF|Ft|HU'},
-  RO:{name:'Romania',flag:'🇷🇴',currency:'RON|lei|RO'},
-  CA:{name:'Canada',flag:'🇨🇦',currency:'CAD|C$|CA'},
-  AU:{name:'Australia',flag:'🇦🇺',currency:'AUD|A$|AU'},
-  NZ:{name:'New Zealand',flag:'🇳🇿',currency:'NZD|NZ$|NZ'},
-  CH:{name:'Switzerland',flag:'🇨🇭',currency:'CHF|Fr|CH'},
-  SE:{name:'Sweden',flag:'🇸🇪',currency:'SEK|kr|SE'},
-  NO:{name:'Norway',flag:'🇳🇴',currency:'NOK|kr|NO'},
-  DK:{name:'Denmark',flag:'🇩🇰',currency:'DKK|kr|DK'},
-};
-
-// ══════════════════════════════════════════
-//  STATE
-// ══════════════════════════════════════════
-const S = {
-  running:false, watchId:null, timer:null,
-  lastPos:null, startTime:null,
-  elapsed:0, dist:0, waitSec:0, speed:0,
-  sym:'$', code:'USD',
-  pathCoords:[],
-  destination:null, route:null, steps:[], currentStep:0,
-  voiceOn:true, mapClickMode:false, lastSpoken:'',
-  theme:'night'
-};
-
-// ══════════════════════════════════════════
-//  THEME
-// ══════════════════════════════════════════
-function toggleTheme(){
-  S.theme = S.theme==='night'?'day':'night';
-  applyTheme();
-  localStorage.setItem('tm_theme', S.theme);
-}
-function applyTheme(){
-  document.documentElement.setAttribute('data-theme', S.theme);
-  const isDay = S.theme==='day';
-  document.getElementById('themeIcon').textContent = isDay ? '☀️' : '🌙';
-  document.getElementById('themeLbl').textContent  = isDay ? 'DAY' : 'NIGHT';
-  // Swap map tiles to light/dark
-  if(window._tileLayer){
-    const url = isDay
-      ? 'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png'
-      : 'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png';
-    // tiles stay same URL, CSS filter handles look
-  }
-  toast(isDay ? '☀️ Day Mode' : '🌙 Night Mode');
-}
-
-// Load saved theme
-const savedTheme = localStorage.getItem('tm_theme') || 'night';
-S.theme = savedTheme;
-applyTheme();
-
-// ══════════════════════════════════════════
-//  MAP
-// ══════════════════════════════════════════
-const map = L.map('map',{zoomControl:false}).setView([25,20],2);
-window._tileLayer = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',{
-  maxZoom:19,
-  attribution:'&copy; <a href="https://www.openstreetmap.org/copyright" style="color:#f5a623">OpenStreetMap</a>'
-}).addTo(map);
-L.control.zoom({position:'bottomright'}).addTo(map);
-
-const tripLine  = L.polyline([],{color:'#f5a623',weight:4,opacity:.85,lineJoin:'round'}).addTo(map);
-const routeLine = L.polyline([],{color:'#2196f3',weight:4,opacity:.5,dashArray:'8 6',lineJoin:'round'}).addTo(map);
-
-function mkIcon(color,size,glow){
-  return L.divIcon({
-    html:`<div style="width:${size}px;height:${size}px;border-radius:50%;background:${color};border:2px solid rgba(0,0,0,.5);box-shadow:0 0 12px ${glow||color}80"></div>`,
-    iconSize:[size,size],iconAnchor:[size/2,size/2],className:''
+function toggleFaq(el) {
+  const isOpen = el.classList.contains('open');
+  document.querySelectorAll('.faq-item').forEach(i => {
+    i.classList.remove('open');
+    i.querySelector('.faq-toggle').textContent = '+';
   });
+  if (!isOpen) {
+    el.classList.add('open');
+    el.querySelector('.faq-toggle').textContent = '−';
+  }
 }
-function mkDestIcon(){
-  return L.divIcon({
-    html:`<div style="width:22px;height:30px;position:relative">
-      <div style="width:22px;height:22px;border-radius:50% 50% 50% 0;background:#f22b45;border:2px solid rgba(0,0,0,.4);transform:rotate(-45deg);box-shadow:0 0 14px rgba(242,43,69,.7)"></div>
-    </div>`,
-    iconSize:[22,30],iconAnchor:[11,30],className:''
+
+const observer = new IntersectionObserver((entries) => {
+  entries.forEach((e, i) => {
+    if (e.isIntersecting) {
+      setTimeout(() => e.target.classList.add('visible'), i * 80);
+      observer.unobserve(e.target);
+    }
   });
-}
+}, { threshold: 0.12 });
 
-let headMarker=null,startMarker=null,destMarker=null,accCircle=null;
-
-map.on('click',e=>{
-  if(!S.mapClickMode)return;
-  setDestination(e.latlng.lat,e.latlng.lng,`${e.latlng.lat.toFixed(4)}, ${e.latlng.lng.toFixed(4)}`);
-  disableMapClick();
-});
-
-// ══════════════════════════════════════════
-//  HELPERS
-// ══════════════════════════════════════════
-const $=id=>document.getElementById(id);
-function pad(n){return String(n).padStart(2,'0');}
-function hhmmss(s){const h=Math.floor(s/3600),m=Math.floor((s%3600)/60),ss=s%60;return h>0?`${pad(h)}:${pad(m)}:${pad(ss)}`:`${pad(m)}:${pad(ss)}`;}
-function haversine(la1,lo1,la2,lo2){const R=6371,dL=(la2-la1)*Math.PI/180,dO=(lo2-lo1)*Math.PI/180,a=Math.sin(dL/2)**2+Math.cos(la1*Math.PI/180)*Math.cos(la2*Math.PI/180)*Math.sin(dO/2)**2;return R*2*Math.atan2(Math.sqrt(a),Math.sqrt(1-a));}
-
-function toast(msg,type){
-  const t=$('toast');t.textContent=msg;
-  t.className=`toast ${type||''} show`;
-  setTimeout(()=>{t.className='toast';},2600);
-}
-function addLog(msg,color){
-  const box=$('logList');
-  const ph=box.querySelector('.log-item');
-  if(ph&&ph.querySelector('.t').textContent==='--:--:--')box.removeChild(ph);
-  const now=new Date().toTimeString().slice(0,8);
-  const d=document.createElement('div');
-  d.className='log-item';
-  d.innerHTML=`<span class="t">${now}</span><span class="e" style="color:${color||'inherit'}">${msg}</span>`;
-  box.appendChild(d);box.scrollTop=box.scrollHeight;
-}
-function calcFare(){
-  const b=parseFloat($('inBase').value)||0,k=parseFloat($('inKm').value)||0,w=parseFloat($('inWait').value)||0;
-  return b+S.dist*k+(S.waitSec/60)*w;
-}
-function updateUI(){
-  $('fareNum').textContent=calcFare().toFixed(2);
-  $('stDist').textContent=S.dist.toFixed(2);
-  $('stSpeed').textContent=Math.round(S.speed);
-  $('stTime').textContent=hhmmss(S.elapsed);
-  const wm=Math.floor(S.waitSec/60),ws=S.waitSec%60;
-  $('stWait').textContent=`${wm}:${pad(ws)}`;
-  $('distFill').style.width=Math.min(S.dist/20*100,100)+'%';
-}
-
-// ══════════════════════════════════════════
-//  CURRENCY
-// ══════════════════════════════════════════
-function onCurrencyChange(){
-  const p=$('selCurrency').value.split('|');
-  S.code=p[0]; S.sym=p[1];
-  $('fareSym').textContent=S.sym;
-  $('u1').textContent=S.sym;
-  $('u2').textContent=`${S.sym}/km`;
-  $('u3').textContent=`${S.sym}/min`;
-  $('cChip').textContent=`${S.sym} ${S.code}`;
-}
-
-function setCurrencyByCode(currencyVal){
-  const sel=$('selCurrency');
-  for(let i=0;i<sel.options.length;i++){
-    if(sel.options[i].value===currencyVal){sel.selectedIndex=i;break;}
-  }
-  onCurrencyChange();
-}
-
-// ══════════════════════════════════════════
-//  COUNTRY DETECTION via GPS reverse geocode
-// ══════════════════════════════════════════
-async function detectCountry(){
-  toast('Detecting your country…');
-  if(!navigator.geolocation){toast('GPS needed for detection','err');return;}
-  navigator.geolocation.getCurrentPosition(async pos=>{
-    try{
-      const {latitude:lat,longitude:lon}=pos.coords;
-      const r=await fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lon}`,{headers:{'Accept-Language':'en'}});
-      const data=await r.json();
-      const cc=(data.address?.country_code||'').toUpperCase();
-      applyCountry(cc, data.address?.country||'Unknown');
-    }catch(e){toast('Detection failed','err');}
-  },()=>toast('GPS permission needed','err'),{timeout:8000});
-}
-
-function applyCountry(cc, countryName){
-  const info = COUNTRY_DATA[cc];
-  if(info){
-    $('cFlag').textContent=info.flag;
-    $('cName').textContent=info.name;
-    $('cSub').textContent=`Auto-detected · ${cc}`;
-    setCurrencyByCode(info.currency);
-    toast(`📍 ${info.name} — ${S.sym} ${S.code}`,'ok');
-    addLog(`Country: ${info.name} · Currency: ${S.code}`,'var(--blue)');
-  } else {
-    $('cFlag').textContent='🌍';
-    $('cName').textContent=countryName||cc;
-    $('cSub').textContent=`Country code: ${cc} · Select currency manually`;
-    toast(`Country: ${cc} — select currency manually`);
-  }
-}
-
-// Also detect from IP as fallback (no GPS needed)
-async function detectCountryByIP(){
-  try{
-    const r=await fetch('https://ipapi.co/json/');
-    const d=await r.json();
-    if(d.country_code){
-      applyCountry(d.country_code, d.country_name);
-    }
-  }catch(e){/* silent fail */}
-}
-
-// ══════════════════════════════════════════
-//  VOICE
-// ══════════════════════════════════════════
-function speak(text){
-  if(!S.voiceOn||!window.speechSynthesis)return;
-  if(text===S.lastSpoken)return;
-  S.lastSpoken=text;
-  window.speechSynthesis.cancel();
-  const u=new SpeechSynthesisUtterance(text);
-  u.rate=.95;u.pitch=1;u.volume=1;
-  const voices=speechSynthesis.getVoices();
-  const eng=voices.find(v=>v.lang.startsWith('en')&&v.name.toLowerCase().includes('google'))||voices.find(v=>v.lang.startsWith('en'));
-  if(eng)u.voice=eng;
-  window.speechSynthesis.speak(u);
-}
-function toggleVoice(){
-  S.voiceOn=!S.voiceOn;
-  $('voiceToggle').className='toggle'+(S.voiceOn?' on':'');
-  toast(S.voiceOn?'🔊 Voice ON':'🔇 Voice OFF');
-}
-
-// ══════════════════════════════════════════
-//  DESTINATION SEARCH
-// ══════════════════════════════════════════
-async function searchDest(){
-  const q=$('destInput').value.trim();
-  if(!q){toast('Enter a destination','err');return;}
-  toast('Searching…');
-  try{
-    const r=await fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(q)}&limit=5`,{headers:{'Accept-Language':'en'}});
-    const data=await r.json();
-    if(!data.length){toast('Place not found','err');return;}
-    showSuggestions(data);
-  }catch(e){toast('Search failed — check connection','err');}
-}
-function showSuggestions(results){
-  const box=$('suggestions');
-  box.innerHTML='';box.style.display='block';
-  results.forEach(p=>{
-    const d=document.createElement('div');
-    d.className='suggestion-item';
-    const name=p.display_name.split(',')[0];
-    const addr=p.display_name.split(',').slice(1,3).join(',').trim();
-    d.innerHTML=`<span class="icon">📍</span><div><div class="sname">${name}</div><div class="saddr">${addr}</div></div>`;
-    d.onclick=()=>{setDestination(parseFloat(p.lat),parseFloat(p.lon),name);box.style.display='none';};
-    box.appendChild(d);
-  });
-}
-async function setDestination(lat,lon,name){
-  S.destination={lat,lon,name};
-  $('destInput').value=name;
-  $('suggestions').style.display='none';
-  if(destMarker)map.removeLayer(destMarker);
-  destMarker=L.marker([lat,lon],{icon:mkDestIcon()})
-    .bindPopup(`<b style="color:#f22b45">📍 ${name}</b>`).addTo(map).openPopup();
-  addLog(`Destination: ${name}`,'var(--blue)');
-  toast(`Destination: ${name}`,'ok');
-  if(S.lastPos)await fetchRoute(S.lastPos.lat,S.lastPos.lon,lat,lon);
-  else map.flyTo([lat,lon],14,{duration:1});
-}
-function enableMapClick(){
-  S.mapClickMode=true;
-  $('mapHint').textContent='👆 Tap map to pin destination';
-  $('mapHint').style.color='var(--accent)';
-  map.getContainer().style.cursor='crosshair';
-  toast('Tap the map to set destination');
-}
-function disableMapClick(){
-  S.mapClickMode=false;
-  $('mapHint').textContent='Tap map to set destination';
-  $('mapHint').style.color='';
-  map.getContainer().style.cursor='';
-}
-
-// ══════════════════════════════════════════
-//  OSRM ROUTING
-// ══════════════════════════════════════════
-async function fetchRoute(fromLat,fromLon,toLat,toLon){
-  try{
-    toast('Calculating route…');
-    const url=`https://router.project-osrm.org/route/v1/driving/${fromLon},${fromLat};${toLon},${toLat}?overview=full&geometries=geojson&steps=true`;
-    const r=await fetch(url);
-    const data=await r.json();
-    if(data.code!=='Ok'||!data.routes.length){toast('No route found','err');return;}
-    S.route=data.routes[0];S.steps=[];S.currentStep=0;
-    data.routes[0].legs.forEach(leg=>{
-      leg.steps.forEach(step=>{
-        S.steps.push({
-          instruction:buildInstruction(step),
-          arrow:getArrow(step.maneuver.type,step.maneuver.modifier),
-          distance:step.distance,
-          name:step.name||'',
-          lat:step.maneuver.location[1],
-          lon:step.maneuver.location[0],
-          type:step.maneuver.type,
-          modifier:step.maneuver.modifier||''
-        });
-      });
-    });
-    const coords=data.routes[0].geometry.coordinates.map(c=>[c[1],c[0]]);
-    routeLine.setLatLngs(coords);
-    map.fitBounds(L.latLngBounds([[fromLat,fromLon],[toLat,toLon]]),{padding:[40,40],animate:true,duration:1});
-    const km=(S.route.distance/1000).toFixed(1);
-    const mins=Math.ceil(S.route.duration/60);
-    const h=Math.floor(mins/60),m=mins%60;
-    const timeStr=h>0?`${h}h ${m}m`:`${m} min`;
-    $('riDist').textContent=km;$('riTime').textContent=timeStr;$('riTurns').textContent=S.steps.length;
-    $('routeInfo').className='route-info show';
-    addLog(`Route: ${km}km · ${timeStr} · ${S.steps.length} turns`,'var(--blue)');
-    if(S.steps.length)updateNavBanner(0);
-    speak(`Route found. ${km} kilometers. ${timeStr}. ${S.steps[0]?.instruction||''}`);
-  }catch(e){toast('Routing failed','err');}
-}
-function buildInstruction(step){
-  const t=step.maneuver.type,m=step.maneuver.modifier||'',n=step.name?`onto ${step.name}`:'';
-  if(t==='depart')return `Head ${m||'forward'} ${n}`;
-  if(t==='arrive')return 'Arrive at destination';
-  if(t==='turn'){
-    if(m.includes('left'))return `Turn left ${n}`;
-    if(m.includes('right'))return `Turn right ${n}`;
-    if(m==='straight')return `Continue straight ${n}`;
-    if(m==='uturn')return `Make a U-turn`;
-    return `Turn ${m} ${n}`;
-  }
-  if(t==='continue')return `Continue ${n}`;
-  if(t==='merge')return `Merge ${m} ${n}`;
-  if(t==='fork')return `Keep ${m} at fork ${n}`;
-  if(t==='roundabout')return `Enter roundabout ${n}`;
-  if(t==='exit roundabout')return `Exit roundabout ${n}`;
-  if(t==='end of road')return `Turn ${m} at end of road`;
-  return `${t} ${m} ${n}`.trim();
-}
-function getArrow(type,mod=''){
-  if(type==='arrive')return '🏁';
-  if(type==='depart')return '⬆';
-  if(type==='roundabout'||type==='rotary')return '🔄';
-  if(mod==='left')return '⬅';
-  if(mod==='right')return '➡';
-  if(mod==='sharp left')return '↰';
-  if(mod==='sharp right')return '↱';
-  if(mod==='slight left')return '↖';
-  if(mod==='slight right')return '↗';
-  if(mod==='uturn')return '↩';
-  return '⬆';
-}
-function updateNavBanner(idx){
-  if(!S.steps.length||idx>=S.steps.length)return;
-  const step=S.steps[idx];
-  $('navBanner').className='nav-banner show';
-  $('navArrow').textContent=step.arrow;
-  $('navInstruction').textContent=step.instruction;
-  $('navStreet').textContent=step.name||'';
-  const dm=step.distance;
-  $('navDist').textContent=dm>=1000?`${(dm/1000).toFixed(1)} km`:`${Math.round(dm)} m`;
-  $('navArrow').className='nav-arrow'+(dm<50?' urgent':'');
-}
-function clearRoute(){
-  routeLine.setLatLngs([]);
-  if(destMarker){map.removeLayer(destMarker);destMarker=null;}
-  S.destination=null;S.route=null;S.steps=[];S.currentStep=0;
-  $('routeInfo').className='route-info';
-  $('navBanner').className='nav-banner';
-  $('destInput').value='';
-  toast('Route cleared');
-}
-
-// ══════════════════════════════════════════
-//  NAV STEP CHECK
-// ══════════════════════════════════════════
-function checkNavStep(lat,lon){
-  if(!S.steps.length||S.currentStep>=S.steps.length)return;
-  for(let i=S.currentStep;i<S.steps.length;i++){
-    const step=S.steps[i];
-    const d=haversine(lat,lon,step.lat,step.lon)*1000;
-    if(d<40){
-      S.currentStep=i+1;
-      if(i+1<S.steps.length){
-        updateNavBanner(i+1);
-        const next=S.steps[i+1];
-        const dist=next.distance>=1000?`${(next.distance/1000).toFixed(1)} kilometers`:`${Math.round(next.distance)} meters`;
-        speak(`In ${dist}, ${next.instruction}`);
-        addLog(`▶ ${next.instruction}`,'var(--blue)');
-      } else {
-        $('navBanner').className='nav-banner show';
-        $('navArrow').textContent='🏁';
-        $('navInstruction').textContent='You have arrived!';
-        $('navDist').textContent='Destination reached';
-        speak('You have arrived at your destination!');
-        addLog('✅ Arrived!','var(--green)');
-      }
-      break;
-    } else if(d<200&&i===S.currentStep){
-      updateNavBanner(i);
-      const warnKey=`w${i}-${Math.floor(d/50)}`;
-      if(warnKey!==S.lastSpoken){
-        S.lastSpoken=warnKey;
-        const dist=d>=1000?`${(d/1000).toFixed(1)} kilometers`:`${Math.round(d)} meters`;
-        speak(`In ${dist}, ${step.instruction}`);
-      }
-      break;
-    }
-  }
-}
-
-// ══════════════════════════════════════════
-//  GPS
-// ══════════════════════════════════════════
-function onPos(pos){
-  const{latitude:lat,longitude:lon,accuracy,speed}=pos.coords;
-  S.speed=speed!=null?speed*3.6:S.speed;
-  $('gpsDot').className='dot gps-active';
-  $('gpsLabel').textContent='GPS ACTIVE';
-  $('gpsLabel').style.color='var(--green)';
-  $('latVal').textContent=lat.toFixed(5);
-  $('lonVal').textContent=lon.toFixed(5);
-  const acc=Math.round(accuracy);
-  if(acc<=10){$('accBadge').className='acc-badge ok';$('accBadge').textContent=`±${acc}m`;}
-  else if(acc<=40){$('accBadge').className='acc-badge mid';$('accBadge').textContent=`±${acc}m`;}
-  else{$('accBadge').className='acc-badge';$('accBadge').textContent=`±${acc}m LOW`;}
-  if(accCircle)map.removeLayer(accCircle);
-  accCircle=L.circle([lat,lon],{radius:accuracy,color:'rgba(245,166,35,.35)',fillColor:'rgba(245,166,35,.04)',fillOpacity:1,weight:1}).addTo(map);
-  if(headMarker)headMarker.setLatLng([lat,lon]);
-  else headMarker=L.marker([lat,lon],{icon:mkIcon('#f5a623',16,'rgba(245,166,35,.7)'),zIndexOffset:1000}).addTo(map);
-  if(S.destination&&!S.route)fetchRoute(lat,lon,S.destination.lat,S.destination.lon);
-  if(S.steps.length)checkNavStep(lat,lon);
-  if(!S.running)return;
-  if(S.lastPos){
-    const d=haversine(S.lastPos.lat,S.lastPos.lon,lat,lon);
-    if(d>0.003&&accuracy<60){
-      S.dist+=d;
-      if(speed==null){const dt=(pos.timestamp-S.lastPos.ts)/3600000;S.speed=dt>0?d/dt:0;}
-      const ll=[lat,lon];S.pathCoords.push(ll);tripLine.addLatLng(ll);
-      map.panTo(ll,{animate:true,duration:.4});
-    }
-  } else {
-    addLog(`GPS fix ±${acc}m — tracking active`,'var(--green)');
-    S.pathCoords=[[lat,lon]];tripLine.setLatLngs([[lat,lon]]);
-    if(startMarker)map.removeLayer(startMarker);
-    startMarker=L.marker([lat,lon],{icon:mkIcon('#00c853',14,'rgba(0,200,83,.7)')})
-      .bindPopup('<b style="color:#00c853">Trip Start</b>').addTo(map);
-    map.flyTo([lat,lon],16,{duration:1.2});
-  }
-  S.lastPos={lat,lon,ts:pos.timestamp};
-  updateUI();
-}
-function onGPSErr(err){
-  const msgs={1:'Location permission denied',2:'GPS unavailable',3:'GPS timeout'};
-  $('gpsDot').className='dot';$('accBadge').className='acc-badge';$('accBadge').textContent='ERROR';
-  $('gpsLabel').textContent='GPS ERROR';$('gpsLabel').style.color='var(--red)';
-  addLog(msgs[err.code]||'GPS error','var(--red)');
-  if(err.code===1){toast(msgs[1],'err');stopRide();}
-}
-
-// ══════════════════════════════════════════
-//  START / STOP
-// ══════════════════════════════════════════
-function startRide(){
-  if(!navigator.geolocation){toast('Geolocation not supported','err');return;}
-  S.running=true;S.lastPos=null;S.startTime=new Date();
-  S.elapsed=0;S.dist=0;S.waitSec=0;S.speed=0;S.pathCoords=[];S.currentStep=0;
-  $('btnStart').disabled=true;$('btnStop').disabled=false;
-  $('fareCard').classList.add('running');$('receipt').style.display='none';
-  $('logList').innerHTML='';
-  tripLine.setLatLngs([]);
-  if(startMarker){map.removeLayer(startMarker);startMarker=null;}
-  onCurrencyChange();updateUI();
-  addLog('Ride started — acquiring GPS…','var(--accent)');
-  S.watchId=navigator.geolocation.watchPosition(onPos,onGPSErr,{enableHighAccuracy:true,maximumAge:1000,timeout:12000});
-  S.timer=setInterval(()=>{
-    S.elapsed++;
-    if(S.speed<(parseFloat($('inThresh').value)||5)&&S.lastPos)S.waitSec++;
-    updateUI();
-  },1000);
-  speak('Ride started');
-  toast('Ride started!','ok');
-}
-function stopRide(){
-  S.running=false;
-  if(S.watchId){navigator.geolocation.clearWatch(S.watchId);S.watchId=null;}
-  if(S.timer){clearInterval(S.timer);S.timer=null;}
-  $('btnStart').disabled=false;$('btnStop').disabled=true;
-  $('fareCard').classList.remove('running');
-  const fare=calcFare();
-  addLog(`Trip ended — ${S.sym}${fare.toFixed(2)}`,'var(--accent)');
-  if(S.lastPos){
-    L.marker([S.lastPos.lat,S.lastPos.lon],{icon:mkIcon('#f22b45',14,'rgba(242,43,69,.7)')})
-      .bindPopup(`<b style="color:#f22b45">Trip End</b><br>${S.sym}${fare.toFixed(2)}`).addTo(map).openPopup();
-    if(S.pathCoords.length>1)map.fitBounds(tripLine.getBounds(),{padding:[30,30],animate:true,duration:1});
-  }
-  speak(`Trip ended. Total fare ${fare.toFixed(2)} ${S.code}`);
-  showReceipt(fare);
-  toast(`Fare: ${S.sym}${fare.toFixed(2)}`,'ok');
-}
-
-// ══════════════════════════════════════════
-//  RECEIPT
-// ══════════════════════════════════════════
-function showReceipt(fare){
-  const b=parseFloat($('inBase').value)||0,k=parseFloat($('inKm').value)||0,w=parseFloat($('inWait').value)||0;
-  $('rDate').textContent=new Date().toLocaleString();
-  $('rDist').textContent=`${S.dist.toFixed(3)} km`;
-  $('rDur').textContent=hhmmss(S.elapsed);
-  $('rBase').textContent=`${S.sym}${b.toFixed(2)}`;
-  $('rDistC').textContent=`${S.sym}${(S.dist*k).toFixed(2)}`;
-  $('rWaitC').textContent=`${S.sym}${((S.waitSec/60)*w).toFixed(2)}`;
-  $('rTotal').textContent=`${S.sym}${fare.toFixed(2)}`;
-  $('receipt').style.display='block';
-  $('receipt').scrollIntoView({behavior:'smooth',block:'nearest'});
-}
-
-function centerMap(){if(S.lastPos)map.flyTo([S.lastPos.lat,S.lastPos.lon],Math.max(map.getZoom(),15),{duration:.8});}
-function clearTripPath(){tripLine.setLatLngs([]);S.pathCoords=[];if(startMarker){map.removeLayer(startMarker);startMarker=null;}toast('Path cleared');}
-
-// ══════════════════════════════════════════
-//  INIT
-// ══════════════════════════════════════════
-onCurrencyChange();
-if(window.speechSynthesis){speechSynthesis.getVoices();speechSynthesis.onvoiceschanged=()=>speechSynthesis.getVoices();}
-
-// Auto-detect country on load via IP
-detectCountryByIP();
-
-// Pre-warm GPS
-navigator.geolocation&&navigator.geolocation.getCurrentPosition(
-  p=>{
-    $('gpsDot').className='dot gps-ready';
-    $('gpsLabel').textContent='GPS READY';
-    $('gpsLabel').style.color='var(--accent)';
-    const acc=Math.round(p.coords.accuracy);
-    $('accBadge').className='acc-badge mid';$('accBadge').textContent=`±${acc}m`;
-    $('latVal').textContent=p.coords.latitude.toFixed(5);
-    $('lonVal').textContent=p.coords.longitude.toFixed(5);
-    map.flyTo([p.coords.latitude,p.coords.longitude],14,{duration:1.5});
-    if(headMarker)headMarker.setLatLng([p.coords.latitude,p.coords.longitude]);
-    else headMarker=L.marker([p.coords.latitude,p.coords.longitude],{icon:mkIcon('#f5a623',16,'rgba(245,166,35,.6)')}).addTo(map);
-    S.lastPos={lat:p.coords.latitude,lon:p.coords.longitude,ts:p.timestamp};
-  },
-  ()=>{},
-  {timeout:6000}
-);
+document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
 </script>
+
 </body>
 </html>
